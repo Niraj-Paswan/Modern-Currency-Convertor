@@ -1,10 +1,21 @@
-*{
+* {
     margin: 0;
     padding: 0;
-    font-family: sans-serif;
+    font-family:poppins;
 }
-body{
-    background: url(Currency.jpeg);
+.poppins-regular {
+    font-family: "Poppins", sans-serif;
+    font-weight: 300;
+    font-style: normal;
+  }
+.icon img {
+    background-repeat: no-repeat;
+    width: 310px;
+    height: 230px;
+    margin-left: 30px;
+}
+body {
+    height: 470px;
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
@@ -12,101 +23,155 @@ body{
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background-color: #f4e4ba;
+    background-color: #fae588;
 }
-h2{
+h2 {
+    
+    color: #050C9C;
+    margin-left: 20px;
     text-align: center;
 }
-.container{
+.container {
     background-color: #fff;
     padding: 2rem;
     border-radius: 8px;
-    height: 47vh;
-    width:40vh;
+    height: 82vh;
+    width: 350px;
 }
-form{
+form {
     margin: 2rem 0 1rem 0;
 }
-form select,input,button{
+form select, input, button {
     width: 100%;
     border: none;
     outline: none;
     border-radius: 5px;
-
+    background-color: #f8f9fa;
 }
-form input{
+form input {
     font-weight: 600;
     border: 1px solid lightgray;
     font-size: 1rem;
     height: 3rem;
     padding-left: 0.5rem;
+    background-color: #f8f9fa;
 }
-form input:hover{
+form input:hover {
+    cursor: pointer;
     border: 2px solid #343a40;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
 }
-/* .ind{
-    margin-left: 160px;
-} */
-.dropdown{
+.dropdown {
     display: flex;
-    justify-content:space-between;
+    justify-content: space-between;
     align-items: center;
     margin-top: 1rem;
 }
-.select-container img{
+.select-container img {
     max-width: 2.5rem;
 }
-.select-container{
+.select-container {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 7.5rem;
     border-radius: 0.3rem;
     border: 1px solid lightgray;
+    background-color: #f8f9fa;
 }
-.select-container:hover{
+.select-container:hover {
+    cursor: pointer;
     border: 1px solid #343a40;
     box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
 }
-.select-container select{
+
+.select-container select {
     font-size: 1rem;
     width: auto;
+    background-color: #f8f9fa;
 }
-.dropdown i{
+.dropdown i {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 40px;
-    width :40px;
+    width: 40px;
     border: 0.5px solid lightgray;
     border-radius: 50%;
     font-size: 1.5rem;
     margin-top: 28px;
+    cursor: pointer;
 }
-.dropdown p{
+i:hover{
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.4);
+}
+.dropdown p {
     margin-bottom: 0.5rem;
 }
-.amount p{
+.amount p {
     margin-bottom: 0.5rem;
 }
-.msg{
+.msg {
+    color: #058c42;
     text-align: center;
     font-weight: 600;
     margin: 1.5rem 0 1.5rem 0;
 }
-button {
-    height: 3rem;
-    background-color: #03045e;
-    color: #fff;
-    font-weight: 600;
-    font-size: 1rem;
-    cursor: pointer;
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 15px;
+    z-index: 1000;
 }
-button:hover{
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.5);
+.overlay.hidden {
+    display: none;
+}
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+.rotate {
+    transform: rotate(180deg);
+    transition: transform 0.5s;
+}
+button {
+    color: white;
+        padding: 17px 40px;
+        border-radius: 50px;
+        cursor: pointer;
+        border: 0;
+        background-color:hsl(261deg 80% 48%);
+        box-shadow: rgb(0 0 0 / 5%) 0 0 8px;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        font-size: 15px;
+        font-weight: 500;
+        border-radius: 5px;
+        transition: all 0.5s ease;
+        gap: 10px;
+}      
+button:hover {
+    font-weight: 600;
+        letter-spacing: 3px;
+        background-color: hsl(261deg 80% 48%);
+        color: hsl(0, 0%, 100%);
+        box-shadow: rgb(93 24 220) 0px 2px 10px 0px;
+}      
+button:active {
+        letter-spacing: 3px;
+        background-color: hsl(261deg 80% 48%);
+        color: hsl(0, 0%, 100%);
+        box-shadow: rgb(93 24 220) 0px 0px 0px 0px;
+        transform: translateY(10px);
+        transition: 100ms;
 }
