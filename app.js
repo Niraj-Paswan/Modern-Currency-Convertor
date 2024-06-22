@@ -49,6 +49,7 @@ const flagChange = (element) => {
     img.src = newSrc;
 };
 
+// Add event listener for swapping currencies
 const swapIcon = document.querySelector(".fa-right-left");
 
 swapIcon.addEventListener("click", () => {
@@ -66,11 +67,12 @@ swapIcon.addEventListener("click", () => {
     let tempSrc = fromImg.src;
     fromImg.src = toImg.src;
     toImg.src = tempSrc;
-    
+
     swapIcon.classList.add("rotate");
+
     setTimeout(() => {
         swapIcon.classList.remove("rotate");
-    }, 300); 
+    }, 300);
 });
 
 document.addEventListener("click", async () => {
@@ -78,12 +80,14 @@ document.addEventListener("click", async () => {
     const warning = document.querySelector('.warning');
     const spinner = document.querySelector('.spinner');
     const msg = document.querySelector('.msg');
+
     if (!amount) {
         warning.textContent = "Amount cannot be empty";
         return;
     } else {
         warning.textContent = "";
     }
+
     setTimeout(() => {
         const fromCurrency = document.querySelector('.from select').value;
         const toCurrency = document.querySelector('.to select').value;
@@ -97,7 +101,7 @@ const updateExchangeRate = async () => {
         amtVal = 1;
         amount.value = "1";
     }
-    
+
     const URL = `${BASE_URL}/${fromCurr.value.toLowerCase()}.json`;
     let response = await fetch(URL);
     let data = await response.json();
@@ -105,6 +109,7 @@ const updateExchangeRate = async () => {
     let finalAmt = (amount.value * rate).toFixed(2); // Format the final amount to two decimal places
     msg.innerText = `${amtVal} ${fromCurr.value} = ${finalAmt} ${toCurr.value}`;
 };
+
 
 btn.addEventListener("click", (evt) => {
     evt.preventDefault();
