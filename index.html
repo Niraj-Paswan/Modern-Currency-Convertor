@@ -1,64 +1,3094 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Currency Converter</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
-</head>
-<body>
-    <div class="cont hover-effect">
-    <div class="cont">
-        <img src="investment-data-animate.svg" alt="currency converter">
-        <h3>Developed By Niraj Paswan</h3>
-        <h6>Let's Get Connect on</h6>
-        <div class="icons">
-            <a href="https://github.com/Niraj-Paswan" target="_blank"><i class="fa-brands fa-github" style="color: black;"></i></a>
+<html lang="en" class="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Exhro - Currency Converter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="shortcut icon" href="favicon.png" type="image/x-icon" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script>
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: {
+                50: "#f1f3f5", // very light gray
+                100: "#e9ecef", // lighter gray
+                200: "#dee2e6", // light gray
+                300: "#ced4da", // medium-light gray
+                400: "#495057", // pure black (your request)
+                500: "#000000", // dark gray (for normal states)
+                600: "#343a40", // darker gray
+                700: "#212529", // almost black
+                800: "#16181a", // deeper black tone
+                900: "#0b0c0d", // almost pure black
+                950: "#050505", // near absolute black
+              },
+            },
+            fontFamily: {
+              sans: ["Inter", "sans-serif"],
+            },
+            boxShadow: {
+              soft: "0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04)",
+            },
+          },
+        },
+      };
+    </script>
+    <style type="text/css">
+      .rotate {
+        transform: rotate(180deg);
+        transition: transform 0.5s;
+      }
+
+      .currency-card {
+        transition: all 0.3s ease;
+      }
+
+      .currency-card:hover {
+        transform: translateY(-3px);
+      }
+
+      .loading-spinner {
+        border: 3px solid rgba(0, 0, 0, 0.1);
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        border-left-color: #0ea5e9;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .dark .loading-spinner {
+        border: 3px solid rgba(255, 255, 255, 0.1);
+        border-left-color: #38bdf8;
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 4px;
+      }
+
+      .dark ::-webkit-scrollbar-thumb {
+        background: #475569;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+
+      .dark ::-webkit-scrollbar-thumb:hover {
+        background: #64748b;
+      }
+
+      /* Custom dropdown */
+      .custom-dropdown {
+        position: relative;
+        user-select: none;
+      }
+
+      .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        z-index: 50;
+        max-height: 250px;
+        overflow-y: auto;
+        margin-top: 4px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+          0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      }
+
+      .dropdown-item {
+        display: flex;
+        align-items: center;
+        padding: 8px 12px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .dropdown-item:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+
+      .dark .dropdown-item:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+
+      .dropdown-item.selected {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+
+      .dark .dropdown-item.selected {
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+
+      .dropdown-item img {
+        width: 20px;
+        height: 20px;
+        border-radius: 2px;
+        margin-right: 8px;
+      }
+      /* Add this to your CSS file */
+      @keyframes rotate360 {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(180deg);
+        }
+      }
+
+      .rotate-360 {
+        animation: rotate360 0.5s ease-out;
+      }
+
+      /* Toast notification */
+      .toast-notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        z-index: 1000;
+        padding: 12px 16px;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        transform: translateY(-20px);
+        opacity: 0;
+        transition: all 0.3s ease;
+      }
+
+      .toast-notification.show {
+        transform: translateY(0);
+        opacity: 1;
+      }
+
+      /* Pulse animation for new rates */
+      @keyframes pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(0, 0, 0, 0.2);
+        }
+        70% {
+          box-shadow: 0 0 0 10px rgba(0, 0, 0, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(0, 0, 0, 0);
+        }
+      }
+
+      .pulse {
+        animation: pulse 1.5s infinite;
+      }
+
+      /* Pulse animation for dark mode */
+      @keyframes dark-pulse {
+        0% {
+          box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.2);
+        }
+        70% {
+          box-shadow: 0 0 0 10px rgba(255, 255, 255, 0);
+        }
+        100% {
+          box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+        }
+      }
+
+      .dark .pulse {
+        animation: dark-pulse 1.5s infinite;
+      }
+
+      /* Fade in animation */
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .fade-in {
+        animation: fadeIn 0.5s ease-out forwards;
+      }
+
+      /* Comparison table */
+      .comparison-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+      }
+
+      .comparison-table th,
+      .comparison-table td {
+        padding: 8px 12px;
+        text-align: left;
+      }
+
+      .comparison-table th {
+        background-color: #f8f9fa;
+        font-weight: 500;
+      }
+
+      .dark .comparison-table th {
+        background-color: rgba(255, 255, 255, 0.05);
+      }
+
+      .comparison-table tr:nth-child(even) {
+        background-color: #f8f9fa;
+      }
+
+      .dark .comparison-table tr:nth-child(even) {
+        background-color: rgba(255, 255, 255, 0.02);
+      }
+
+      .dark .comparison-table tr:nth-child(odd) {
+        background-color: rgba(255, 255, 255, 0.01);
+      }
+
+      /* Tooltip */
+      .tooltip {
+        position: relative;
+        display: inline-block;
+      }
+
+      .tooltip .tooltip-text {
+        visibility: hidden;
+        width: 200px;
+        background-color: #333;
+        color: #fff;
+        text-align: center;
+        border-radius: 6px;
+        padding: 8px;
+        position: absolute;
+        z-index: 1;
+        bottom: 125%;
+        left: 50%;
+        transform: translateX(-50%);
+        opacity: 0;
+        transition: opacity 0.3s;
+      }
+
+      .tooltip:hover .tooltip-text {
+        visibility: visible;
+        opacity: 1;
+      }
+
+      /* Skeleton loading */
+      .skeleton {
+        background: linear-gradient(
+          90deg,
+          #f0f0f0 25%,
+          #e0e0e0 50%,
+          #f0f0f0 75%
+        );
+        background-size: 200% 100%;
+        animation: skeleton-loading 1.5s infinite;
+      }
+
+      .dark .skeleton {
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0.05) 25%,
+          rgba(255, 255, 255, 0.1) 50%,
+          rgba(255, 255, 255, 0.05) 75%
+        );
+        background-size: 200% 100%;
+        animation: skeleton-loading 1.5s infinite;
+      }
+
+      @keyframes skeleton-loading {
+        0% {
+          background-position: 200% 0;
+        }
+        100% {
+          background-position: -200% 0;
+        }
+      }
+
+      /* Candlestick chart styles */
+      .candlestick-up {
+        fill: rgba(0, 177, 106, 0.2);
+        stroke: rgba(0, 177, 106, 1);
+        stroke-width: 1;
+      }
+
+      .candlestick-down {
+        fill: rgba(255, 69, 58, 0.2);
+        stroke: rgba(255, 69, 58, 1);
+        stroke-width: 1;
+      }
+
+      .dark .candlestick-up {
+        fill: rgba(0, 177, 106, 0.3);
+        stroke: rgba(0, 177, 106, 1);
+      }
+
+      .dark .candlestick-down {
+        fill: rgba(255, 69, 58, 0.3);
+        stroke: rgba(255, 69, 58, 1);
+      }
+
+      .candlestick-wick {
+        stroke-width: 1;
+      }
+
+      .candlestick-wick-up {
+        stroke: rgba(0, 177, 106, 1);
+      }
+
+      .candlestick-wick-down {
+        stroke: rgba(255, 69, 58, 1);
+      }
+
+      /* Comparison currency tag */
+      .comparison-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 4px 10px;
+        border-radius: 16px;
+        background-color: #f1f5f9;
+        margin-right: 6px;
+        margin-bottom: 6px;
+        transition: all 0.2s ease;
+      }
+
+      .dark .comparison-tag {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+
+      .comparison-tag:hover {
+        background-color: #e2e8f0;
+      }
+
+      .dark .comparison-tag:hover {
+        background-color: rgba(255, 255, 255, 0.15);
+      }
+
+      .comparison-tag .remove-btn {
+        width: 16px;
+        height: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        background-color: rgba(0, 0, 0, 0.1);
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .dark .comparison-tag .remove-btn {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+
+      .comparison-tag .remove-btn:hover {
+        background-color: rgba(0, 0, 0, 0.2);
+      }
+
+      .dark .comparison-tag .remove-btn:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+      }
+    </style>
+  </head>
+  <body
+    class="font-sans bg-gray-50 dark:bg-black text-slate-900 dark:text-slate-100 transition-colors duration-200"
+  >
+    <div class="container mx-auto px-4 py-8 max-w-6xl">
+      <!-- Header with Dark Mode Toggle -->
+      <div class="flex justify-between items-center mb-2">
+        <div class="flex items-center gap-4 mb-8">
+          <div
+            class="bg-primary-500 dark:bg-black border dark:border-gray-300/40 text-white p-3 rounded-xl shadow-md flex items-center justify-center"
+          >
+            <img
+              src="logo.png"
+              class="w-34 h-8 rounded-full object-cover"
+              alt="Logo"
+            />
+          </div>
+          <div class="flex flex-row justify-center items-center gap-2">
+            <p
+              class="text-base text-black dark:text-white mt-1 font-medium font-sans"
+            >
+              - The Currency Converter
+            </p>
+          </div>
         </div>
+
+        <div class="flex items-center gap-3">
+          <!-- Auto-refresh toggle -->
+          <div class="flex items-center">
+            <div
+              class="relative inline-block w-10 mr-2 align-middle select-none"
+            >
+              <input type="checkbox" id="auto-refresh" class="sr-only peer" />
+              <div
+                class="hidden w-10 h-5 bg-gray-200 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all dark:border-gray-600 peer-checked:bg-primary-500"
+              ></div>
+            </div>
+          </div>
+
+          <button
+            id="theme-toggle"
+            class="p-2 rounded-full bg-slate-200 dark:bg-gray-300/20 text-slate-700 dark:text-white hover:bg-slate-300 dark:hover:bg-gray-300/30 transition-colors"
+          >
+            <i data-lucide="moon" class="w-5 h-5 dark:hidden"></i>
+            <i data-lucide="sun" class="w-5 h-5 hidden dark:block"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <!-- Left Column - Converter -->
+        <div class="lg:col-span-2 space-y-8">
+          <!-- Converter Card -->
+          <div
+            class="bg-white dark:bg-gray-100/10 rounded-2xl border-[1.5px] border-gray-300 dark:border-gray-300/20 shadow-sm p-6"
+          >
+            <div class="flex flex-row md:flex-row gap-8">
+              <!-- Only the converter form now -->
+              <div class="w-full">
+                <form id="converter-form" class="space-y-5">
+                  <div>
+                    <label
+                      for="amount"
+                      class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5"
+                      >Amount</label
+                    >
+                    <input
+                      type="text"
+                      id="amount"
+                      value="1"
+                      class="w-full pl-4 py-2.5 rounded-lg border-[1.5px] border-slate-300 dark:border-gray-300/10 bg-white dark:bg-gray-200/5 text-slate-900 dark:text-white focus:outline-none focus:ring-0 focus:ring-primary-500 focus:border-primary-500 transition-colors"
+                      aria-label="Amount to convert"
+                    />
+                    <p class="warning text-red-500 text-sm mt-1 hidden"></p>
+                  </div>
+
+                  <div class="grid grid-cols-9 gap-2 items-end">
+                    <div class="col-span-4">
+                      <label
+                        class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5"
+                        >From</label
+                      >
+                      <!-- Custom dropdown for "From" currency -->
+                      <div class="custom-dropdown" id="from-dropdown">
+                        <div
+                          class="dropdown-selected flex items-center justify-between p-2.5 border border-slate-200 dark:border-gray-300/10 rounded-lg bg-white dark:bg-gray-200/5 hover:border-slate-400 dark:hover:border-gray-300/25 transition-colors cursor-pointer"
+                          aria-haspopup="listbox"
+                          aria-expanded="false"
+                          aria-label="Select source currency"
+                        >
+                          <div class="flex items-center space-x-2">
+                            <img
+                              id="from-flag"
+                              src="https://flagsapi.com/US/flat/64.png"
+                              alt="From Currency Flag"
+                              class="w-7 h-7 rounded-md"
+                            />
+                            <span
+                              id="from-text"
+                              class="text-slate-900 dark:text-white"
+                              >USD</span
+                            >
+                          </div>
+                          <i
+                            data-lucide="chevron-down"
+                            class="w-4 h-4 text-slate-500"
+                          ></i>
+                        </div>
+                        <div
+                          class="dropdown-menu hidden bg-white dark:bg-zinc-700 border border-slate-200 dark:border-gray-300/10"
+                          id="from-menu"
+                          role="listbox"
+                        >
+                          <div
+                            class="p-2 sticky top-0 bg-white dark:bg-zinc-700 border-b border-slate-200 dark:border-gray-300/10"
+                          >
+                            <input
+                              type="text"
+                              class="w-full p-2 text-sm border border-slate-200 dark:border-gray-300/10 rounded-md bg-white dark:bg-gray-200/5 text-slate-900 dark:text-white focus:outline-none focus:ring-0 focus:border-primary-500 search-input"
+                              placeholder="Search currencies..."
+                              id="from-search"
+                              aria-label="Search currencies"
+                            />
+                          </div>
+                          <div id="from-currencies-list">
+                            <!-- Dropdown items will be inserted here by JavaScript -->
+                          </div>
+                        </div>
+                        <input
+                          type="hidden"
+                          id="from"
+                          name="from"
+                          value="USD"
+                        />
+                      </div>
+                    </div>
+
+                    <div class="col-span-1 flex justify-center">
+                      <button
+                        type="button"
+                        id="swap-button"
+                        class="h-10 w-10 rounded-full border border-slate-200 dark:border-gray-300/20 flex items-center justify-center hover:bg-slate-100 dark:hover:bg-gray-200/5 transition-colors"
+                        aria-label="Swap currencies"
+                      >
+                        <i
+                          data-lucide="repeat"
+                          class="w-4 h-4 text-primary-500 dark:text-white"
+                        ></i>
+                      </button>
+                    </div>
+
+                    <div class="col-span-4">
+                      <label
+                        class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5"
+                        >To</label
+                      >
+                      <!-- Custom dropdown for "To" currency -->
+                      <div class="custom-dropdown" id="to-dropdown">
+                        <div
+                          class="dropdown-selected flex items-center justify-between p-2.5 border border-slate-200 dark:border-gray-300/10 rounded-lg bg-white dark:bg-gray-200/5 hover:border-slate-400 dark:hover:border-gray-300/25 transition-colors cursor-pointer"
+                          aria-haspopup="listbox"
+                          aria-expanded="false"
+                          aria-label="Select target currency"
+                        >
+                          <div class="flex items-center space-x-2">
+                            <img
+                              id="to-flag"
+                              src="https://flagsapi.com/IN/flat/64.png"
+                              alt="To Currency Flag"
+                              class="w-7 h-7 rounded-md"
+                            />
+                            <span
+                              id="to-text"
+                              class="text-slate-900 dark:text-white"
+                              >INR</span
+                            >
+                          </div>
+                          <i
+                            data-lucide="chevron-down"
+                            class="w-4 h-4 text-slate-500"
+                          ></i>
+                        </div>
+                        <div
+                          class="dropdown-menu hidden bg-white dark:bg-zinc-700 border border-slate-200 dark:border-gray-300/10"
+                          id="to-menu"
+                          role="listbox"
+                        >
+                          <div
+                            class="p-2 sticky top-0 bg-white dark:bg-zinc-700 border-b border-slate-200 dark:border-gray-300/10"
+                          >
+                            <input
+                              type="text"
+                              class="w-full p-2 text-sm border border-slate-200 dark:border-gray-300/10 rounded-md bg-white dark:bg-gray-200/5 text-slate-900 dark:text-white focus:outline-none focus:ring-0 focus:border-primary-500 search-input"
+                              placeholder="Search currencies..."
+                              id="to-search"
+                              aria-label="Search currencies"
+                            />
+                          </div>
+                          <div id="to-currencies-list">
+                            <!-- Dropdown items will be inserted here by JavaScript -->
+                          </div>
+                        </div>
+                        <input type="hidden" id="to" name="to" value="INR" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div
+                    class="msg py-4 text-center text-primary-600 dark:text-gray-100 font-medium bg-primary-50 dark:bg-gray-400/10 rounded-lg"
+                  ></div>
+
+                  <div class="flex flex-col sm:flex-row gap-3">
+                    <button
+                      type="submit"
+                      class="flex-1 py-3 px-4 bg-primary-500 dark:bg-transparent border dark:border-gray-300/10 hover:bg-gradient-to-b hover:from-white/30 dark:hover:bg-gray-200/10 hover:to-transparent text-white font-medium rounded-lg shadow transition-colors duration-200 flex items-center justify-center gap-2"
+                    >
+                      <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                      <span>Get Exchange Rate</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      id="compare-button"
+                      class="py-3 px-4 bg-white dark:bg-gray-200/5 border border-slate-200 dark:border-gray-300/10 hover:bg-slate-100 dark:hover:bg-gray-200/10 text-slate-800 dark:text-white font-medium rounded-lg shadow-sm transition-colors duration-200 flex items-center justify-center gap-2"
+                      aria-label="Compare multiple currencies"
+                    >
+                      <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
+                      <span>Compare</span>
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- Historical Chart -->
+          <div
+            class="bg-white dark:bg-gray-100/10 rounded-2xl border-[1.5px] border-gray-300 dark:border-gray-300/20 shadow-sm p-6"
+          >
+            <div
+              class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4"
+            >
+              <h2
+                class="text-lg font-semibold text-slate-900 dark:text-white flex items-center gap-2"
+              >
+                <i
+                  data-lucide="line-chart"
+                  class="w-5 h-5 text-primary-500 dark:text-white"
+                ></i>
+                Historical Exchange Rates
+              </h2>
+              <div class="flex flex-wrap gap-2">
+                <div class="inline-flex rounded-md shadow-sm" role="group">
+                  <button
+                    type="button"
+                    data-range="7"
+                    class="history-range-btn px-3 py-1.5 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-l-lg hover:bg-slate-50 hover:text-primary-600 focus:z-10 focus:ring-0 focus:bg-black focus:text-white dark:bg-gray-200/5 dark:border-gray-300/10 dark:text-slate-300 dark:hover:text-white dark:hover:bg-gray-200/10 dark:focus:ring-0 dark:focus:bg-black dark:focus:text-white active-range"
+                  >
+                    7 Days
+                  </button>
+                  <button
+                    type="button"
+                    data-range="30"
+                    class="history-range-btn px-3 py-1.5 text-sm font-medium text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 hover:text-primary-600 focus:z-10 focus:ring-0 focus:bg-black focus:text-white dark:bg-gray-200/5 dark:border-gray-300/10 dark:text-slate-300 dark:hover:text-white dark:hover:bg-gray-200/10 dark:focus:ring-0 dark:focus:bg-black dark:focus:text-white active-range"
+                  >
+                    1 Month
+                  </button>
+                  <button
+                    type="button"
+                    data-range="90"
+                    class="history-range-btn px-3 py-1.5 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-r-lg hover:bg-slate-50 hover:text-primary-600 focus:z-10 focus:ring-0 focus:bg-black focus:text-white dark:bg-gray-200/5 dark:border-gray-300/10 dark:text-slate-300 dark:hover:text-white dark:hover:bg-gray-200/10 dark:focus:ring-0 dark:focus:bg-black dark:focus:text-white active-range"
+                  >
+                    3 Months
+                  </button>
+                </div>
+                <select
+                  id="chart-type"
+                  class="px-3 py-1.5 text-sm font-medium text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 focus:outline-none dark:bg-gray-200/5 dark:border-gray-300/10 dark:text-slate-300 dark:hover:bg-gray-200/10"
+                  aria-label="Chart type"
+                >
+                  <option value="line">Line Chart</option>
+                  <option value="bar">Bar Chart</option>
+                </select>
+              </div>
+            </div>
+            <div class="relative h-[399px]">
+              <div
+                id="chart-loading"
+                class="absolute inset-0 flex items-center justify-center bg-white/80 dark:bg-slate-900/80 z-10"
+              >
+                <div class="loading-spinner"></div>
+              </div>
+              <canvas id="rateChart"></canvas>
+            </div>
+            <div
+              class="mt-4 text-xs text-slate-500 dark:text-slate-400 flex items-center justify-between"
+            >
+              <div class="flex items-center gap-2">
+                <span id="chart-min-value">Min: --</span>
+                <span id="chart-max-value">Max: --</span>
+                <span id="chart-avg-value">Avg: --</span>
+              </div>
+              <div>
+                <button
+                  id="download-chart"
+                  class="text-xs px-2 py-1 bg-slate-100 dark:bg-gray-200/10 rounded hover:bg-slate-200 dark:hover:bg-gray-200/20 transition-colors flex items-center gap-1"
+                >
+                  <i data-lucide="download" class="w-3 h-3"></i>
+                  <span>Download</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Currency Comparison (Hidden by default) -->
+          <div
+            id="currency-comparison"
+            class="bg-white dark:bg-gray-100/10 rounded-2xl border-[1.5px] border-gray-300 dark:border-gray-300/20 shadow-sm p-6 hidden"
+          >
+            <div class="flex justify-between items-center mb-6">
+              <h2
+                class="text-lg font-semibold text-slate-900 dark:text-white flex items-center gap-2"
+              >
+                <i
+                  data-lucide="bar-chart-2"
+                  class="w-5 h-5 text-primary-500 dark:text-white"
+                ></i>
+                Currency Comparison
+              </h2>
+              <button
+                id="close-comparison"
+                class="text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+              >
+                <i data-lucide="x" class="w-5 h-5"></i>
+              </button>
+            </div>
+
+            <div class="mb-4">
+              <div class="flex flex-wrap gap-2 mb-3">
+                <div class="flex-1">
+                  <label
+                    class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5"
+                    >Base Currency</label
+                  >
+                  <div
+                    class="flex items-center p-2.5 border border-slate-200 dark:border-gray-300/10 rounded-lg bg-white dark:bg-gray-200/5"
+                  >
+                    <img
+                      id="comparison-base-flag"
+                      src="https://flagsapi.com/US/flat/64.png"
+                      alt="Base Currency Flag"
+                      class="w-5 h-5 rounded-md mr-2"
+                    />
+                    <span
+                      id="comparison-base-currency"
+                      class="text-slate-900 dark:text-white"
+                      >USD</span
+                    >
+                  </div>
+                </div>
+
+                <div class="flex-1">
+                  <label
+                    class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1.5"
+                    >Add Currencies</label
+                  >
+                  <div class="custom-dropdown" id="compare-dropdown">
+                    <div
+                      class="dropdown-selected flex items-center justify-between p-2.5 border border-slate-200 dark:border-gray-300/10 rounded-lg bg-white dark:bg-gray-200/5 hover:border-slate-400 dark:hover:border-gray-300/25 transition-colors cursor-pointer"
+                      aria-haspopup="listbox"
+                      aria-expanded="false"
+                    >
+                      <span class="text-slate-900 dark:text-white text-sm"
+                        >Select currency</span
+                      >
+                      <i data-lucide="plus" class="w-4 h-4 text-slate-500"></i>
+                    </div>
+                    <div
+                      class="dropdown-menu hidden bg-white dark:bg-zinc-700 border border-slate-200 dark:border-gray-300/10"
+                      id="compare-menu"
+                      role="listbox"
+                    >
+                      <div
+                        class="p-2 sticky top-0 bg-white dark:bg-zinc-700 border-b border-slate-200 dark:border-gray-300/10"
+                      >
+                        <input
+                          type="text"
+                          class="w-full p-2 text-sm border border-slate-200 dark:border-gray-300/10 rounded-md bg-white dark:bg-gray-200/5 text-slate-900 dark:text-white focus:outline-none focus:ring-0 focus:border-primary-500 search-input"
+                          placeholder="Search currencies..."
+                          id="compare-search"
+                          aria-label="Search currencies to compare"
+                        />
+                      </div>
+                      <div id="compare-currencies-list">
+                        <!-- Dropdown items will be inserted here by JavaScript -->
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div
+                id="comparison-tags"
+                class="flex flex-wrap gap-2 min-h-[40px]"
+              >
+                <!-- Selected currencies for comparison will appear here -->
+              </div>
+            </div>
+
+            <div class="overflow-x-auto">
+              <table class="comparison-table text-sm w-full">
+                <thead>
+                  <tr>
+                    <th class="rounded-tl-lg">Currency</th>
+                    <th>Rate (vs Base)</th>
+                    <th>1 Day Change</th>
+                    <th>7 Day Change</th>
+                    <th class="rounded-tr-lg">30 Day Change</th>
+                  </tr>
+                </thead>
+                <tbody id="comparison-table-body">
+                  <!-- Comparison data will be inserted here -->
+                  <tr>
+                    <td
+                      colspan="5"
+                      class="text-center py-4 text-slate-500 dark:text-slate-400"
+                    >
+                      Add currencies to compare
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column - Additional Features -->
+        <div class="lg:col-span-1 space-y-8">
+          <!-- Popular Currency Pairs -->
+          <div
+            class="bg-white dark:bg-gray-100/10 rounded-2xl border-[1.5px] border-gray-300 dark:border-gray-300/20 shadow-sm p-6"
+          >
+            <h2
+              class="text-lg font-semibold text-slate-900 dark:text-white flex items-center gap-2 mb-4"
+            >
+              <i
+                data-lucide="trending-up"
+                class="w-5 h-5 text-primary-500 dark:text-white"
+              ></i>
+              Popular Pairs
+            </h2>
+            <div class="space-y-3" id="popular-pairs">
+              <div class="flex justify-center py-4">
+                <div class="loading-spinner"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Saved Conversions -->
+          <div
+            class="bg-white dark:bg-gray-100/10 rounded-2xl border-[1.5px] border-gray-300 dark:border-gray-300/20 shadow-sm p-6"
+          >
+            <div class="flex justify-between items-center mb-4">
+              <h2
+                class="text-lg font-semibold text-slate-900 dark:text-white flex items-center gap-2"
+              >
+                <i
+                  data-lucide="bookmark"
+                  class="w-5 h-5 text-primary-500 text-white"
+                ></i>
+                Saved Conversions
+              </h2>
+              <button
+                id="save-current"
+                class="text-xs px-3 py-1.5 bg-primary-100 text-primary-700 dark:bg-gray-200/10 dark:text-white rounded-full hover:bg-primary-200 dark:hover:bg-gray-200/5 transition-colors flex items-center gap-1.5"
+              >
+                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                <span>Save</span>
+              </button>
+            </div>
+            <div
+              id="saved-conversions"
+              class="space-y-2.5 max-h-[200px] overflow-y-auto pr-1"
+            >
+              <p
+                class="text-slate-500 dark:text-slate-400 text-center italic text-sm py-4"
+              >
+                No saved conversions yet
+              </p>
+            </div>
+          </div>
+
+          <!-- Currency Information -->
+          <div
+            class="bg-white dark:bg-gray-100/10 rounded-2xl border-[1.5px] border-gray-300 dark:border-gray-300/20 shadow-sm p-6"
+          >
+            <h2
+              class="text-lg font-semibold text-slate-900 dark:text-white flex items-center gap-2 mb-4"
+            >
+              <i
+                data-lucide="info"
+                class="w-5 h-5 text-primary-500 dark:text-white"
+              ></i>
+              Currency Information
+            </h2>
+            <div id="currency-info" class="space-y-4">
+              <div class="flex items-center space-x-3">
+                <div
+                  class="w-10 h-10 flex items-center justify-center bg-primary-100 dark:bg-gray-200/20 rounded-full"
+                >
+                  <i
+                    data-lucide="circle-help"
+                    class="w-5 h-5 text-primary-500"
+                  ></i>
+                </div>
+                <div>
+                  <h3 class="font-medium text-slate-800 dark:text-slate-200">
+                    Select a currency
+                  </h3>
+                  <p class="text-xs text-slate-500 dark:text-slate-400">
+                    Currency details will appear here
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Quick Calculator -->
+          <div
+            class="hidden bg-white dark:bg-gray-100/10 rounded-2xl border-[1.5px] border-gray-300 dark:border-gray-300/20 shadow-sm p-6"
+          >
+            <div class="space-y-3">
+              <div class="grid grid-cols-2 gap-2">
+                <div>
+                  <label
+                    for="quick-amount"
+                    class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1"
+                    >Amount</label
+                  >
+                  <input
+                    type="number"
+                    id="quick-amount"
+                    value="1"
+                    class="w-full p-2 text-sm border border-slate-200 dark:border-gray-300/10 rounded-md bg-white dark:bg-gray-200/5 text-slate-900 dark:text-white focus:outline-none focus:ring-0 focus:border-primary-500"
+                    aria-label="Quick calculator amount"
+                  />
+                </div>
+                <div>
+                  <label
+                    for="quick-currency"
+                    class="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1"
+                    >Currency</label
+                  >
+                  <select
+                    id="quick-currency"
+                    class="w-full p-2 text-sm border border-slate-200 dark:border-gray-300/10 rounded-md bg-white dark:bg-gray-200/5 text-slate-900 dark:text-white focus:outline-none focus:ring-0 focus:border-primary-500"
+                    aria-label="Quick calculator currency"
+                  >
+                    <option value="USD">USD</option>
+                    <option value="EUR">EUR</option>
+                    <option value="GBP">GBP</option>
+                    <option value="JPY">JPY</option>
+                    <option value="INR">INR</option>
+                  </select>
+                </div>
+              </div>
+
+              <div id="quick-results" class="mt-3 space-y-2">
+                <!-- Quick calculation results will appear here -->
+                <div
+                  class="text-center text-xs text-slate-500 dark:text-slate-400 py-2"
+                >
+                  Enter an amount to see conversions
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Toast Notification Container -->
+      <div id="toast-container"></div>
+
+      <!-- Footer -->
+      <footer
+        class="mt-12 text-center text-slate-500 dark:text-gray-300 text-sm"
+      >
+        <p>© 2025 Exhro ~ by Niraj Paswan. All rights reserved.</p>
+        <div class="flex justify-center gap-3 mt-4">
+          <a
+            href="https://github.com/Niraj-Paswan"
+            target="_blank"
+            class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-300 dark:bg-gray-300/20 text-gray-600 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-300/40 transition-colors"
+            aria-label="GitHub"
+          >
+            <i data-lucide="github" class="w-5 h-5"></i>
+          </a>
+        </div>
+      </footer>
     </div>
-</div>
-    <div class="container">
-        <div class="icon">
+
+    <script>
+      // Initialize Lucide icons
+      document.addEventListener("DOMContentLoaded", () => {
+        lucide.createIcons();
+      });
+
+      // ===============================
+// Country List for Currency Codes
+// ===============================
+
+const countryList = {
+  AED: "AE", AFN: "AF", XCD: "AG", ALL: "AL", AMD: "AM",
+  ANG: "AN", AOA: "AO", AQD: "AQ", ARS: "AR", AUD: "AU",
+  AZN: "AZ", BAM: "BA", BBD: "BB", BDT: "BD", XOF: "BE",
+  BGN: "BG", BHD: "BH", BIF: "BI", BMD: "BM", BND: "BN",
+  BOB: "BO", BRL: "BR", BSD: "BS", NOK: "BV", BWP: "BW",
+  BYR: "BY", BZD: "BZ", CAD: "CA", CDF: "CD", XAF: "CF",
+  CHF: "CH", CLP: "CL", CNY: "CN", COP: "CO", CRC: "CR",
+  CUP: "CU", CVE: "CV", CYP: "CY", CZK: "CZ", DJF: "DJ",
+  DKK: "DK", DOP: "DO", DZD: "DZ", ECS: "EC", EEK: "EE",
+  EGP: "EG", ETB: "ET", EUR: "FR", FJD: "FJ", FKP: "FK",
+  GBP: "GB", GEL: "GE", GGP: "GG", GHS: "GH", GIP: "GI",
+  GMD: "GM", GNF: "GN", GTQ: "GT", GYD: "GY", HKD: "HK",
+  HNL: "HN", HRK: "HR", HTG: "HT", HUF: "HU", IDR: "ID",
+  ILS: "IL", INR: "IN", IQD: "IQ", IRR: "IR", ISK: "IS",
+  JMD: "JM", JOD: "JO", JPY: "JP", KES: "KE", KGS: "KG",
+  KHR: "KH", KMF: "KM", KPW: "KP", KRW: "KR", KWD: "KW",
+  KYD: "KY", KZT: "KZ", LAK: "LA", LBP: "LB", LKR: "LK",
+  LRD: "LR", LSL: "LS", LTL: "LT", LVL: "LV", LYD: "LY",
+  MAD: "MA", MDL: "MD", MGA: "MG", MKD: "MK", MMK: "MM",
+  MNT: "MN", MOP: "MO", MRO: "MR", MTL: "MT", MUR: "MU",
+  MVR: "MV", MWK: "MW", MXN: "MX", MYR: "MY", MZN: "MZ",
+  NAD: "NA", XPF: "NC", NGN: "NG", NIO: "NI", NPR: "NP",
+  NZD: "NZ", OMR: "OM", PAB: "PA", PEN: "PE", PGK: "PG",
+  PHP: "PH", PKR: "PK", PLN: "PL", PYG: "PY", QAR: "QA",
+  RON: "RO", RSD: "RS", RUB: "RU", RWF: "RW", SAR: "SA",
+  SBD: "SB", SCR: "SC", SDG: "SD", SEK: "SE", SGD: "SG",
+  SKK: "SK", SLL: "SL", SOS: "SO", SRD: "SR", STD: "ST",
+  SVC: "SV", SYP: "SY", SZL: "SZ", THB: "TH", TJS: "TJ",
+  TMT: "TM", TND: "TN", TOP: "TO", TRY: "TR", TTD: "TT",
+  TWD: "TW", TZS: "TZ", UAH: "UA", UGX: "UG", USD: "US",
+  UYU: "UY", UZS: "UZ", VEF: "VE", VND: "VN", VUV: "VU",
+  YER: "YE", ZAR: "ZA", ZMK: "ZM", ZWD: "ZW",
+};
+
+// =====================
+// Country Names by Code
+// =====================
+
+const countryNames = {
+  AE: "United Arab Emirates", AF: "Afghanistan", AG: "Antigua and Barbuda", AL: "Albania", AM: "Armenia",
+  AN: "Netherlands Antilles", AO: "Angola", AQ: "Antarctica", AR: "Argentina", AU: "Australia",
+  AZ: "Azerbaijan", BA: "Bosnia and Herzegovina", BB: "Barbados", BD: "Bangladesh", BE: "Belgium",
+  BG: "Bulgaria", BH: "Bahrain", BI: "Burundi", BM: "Bermuda", BN: "Brunei",
+  BO: "Bolivia", BR: "Brazil", BS: "Bahamas", BV: "Bouvet Island", BW: "Botswana",
+  BY: "Belarus", BZ: "Belize", CA: "Canada", CD: "Congo - Kinshasa", CF: "Central African Republic",
+  CH: "Switzerland", CL: "Chile", CN: "China", CO: "Colombia", CR: "Costa Rica",
+  CU: "Cuba", CV: "Cape Verde", CY: "Cyprus", CZ: "Czech Republic", DJ: "Djibouti",
+  DK: "Denmark", DO: "Dominican Republic", DZ: "Algeria", EC: "Ecuador", EE: "Estonia",
+  EG: "Egypt", ET: "Ethiopia", FR: "France", FJ: "Fiji", FK: "Falkland Islands",
+  GB: "United Kingdom", GE: "Georgia", GG: "Guernsey", GH: "Ghana", GI: "Gibraltar",
+  GM: "Gambia", GN: "Guinea", GT: "Guatemala", GY: "Guyana", HK: "Hong Kong",
+  HN: "Honduras", HR: "Croatia", HT: "Haiti", HU: "Hungary", ID: "Indonesia",
+  IL: "Israel", IN: "India", IQ: "Iraq", IR: "Iran", IS: "Iceland",
+  JM: "Jamaica", JO: "Jordan", JP: "Japan", KE: "Kenya", KG: "Kyrgyzstan",
+  KH: "Cambodia", KM: "Comoros", KP: "North Korea", KR: "South Korea", KW: "Kuwait",
+  KY: "Cayman Islands", KZ: "Kazakhstan", LA: "Laos", LB: "Lebanon", LK: "Sri Lanka",
+  LR: "Liberia", LS: "Lesotho", LT: "Lithuania", LV: "Latvia", LY: "Libya",
+  MA: "Morocco", MD: "Moldova", MG: "Madagascar", MK: "North Macedonia", MM: "Myanmar",
+  MN: "Mongolia", MO: "Macau", MR: "Mauritania", MT: "Malta", MU: "Mauritius",
+  MV: "Maldives", MW: "Malawi", MX: "Mexico", MY: "Malaysia", MZ: "Mozambique",
+  NA: "Namibia", NC: "New Caledonia", NG: "Nigeria", NI: "Nicaragua", NP: "Nepal",
+  NZ: "New Zealand", OM: "Oman", PA: "Panama", PE: "Peru", PG: "Papua New Guinea",
+  PH: "Philippines", PK: "Pakistan", PL: "Poland", PY: "Paraguay", QA: "Qatar",
+  RO: "Romania", RS: "Serbia", RU: "Russia", RW: "Rwanda", SA: "Saudi Arabia",
+  SB: "Solomon Islands", SC: "Seychelles", SD: "Sudan", SE: "Sweden", SG: "Singapore",
+  SK: "Slovakia", SL: "Sierra Leone", SO: "Somalia", SR: "Suriname", ST: "São Tomé and Príncipe",
+  SV: "El Salvador", SY: "Syria", SZ: "Eswatini", TH: "Thailand", TJ: "Tajikistan",
+  TM: "Turkmenistan", TN: "Tunisia", TO: "Tonga", TR: "Turkey", TT: "Trinidad and Tobago",
+  TW: "Taiwan", TZ: "Tanzania", UA: "Ukraine", UG: "Uganda", US: "United States",
+  UY: "Uruguay", UZ: "Uzbekistan", VE: "Venezuela", VN: "Vietnam", VU: "Vanuatu",
+  YE: "Yemen", ZA: "South Africa", ZM: "Zambia", ZW: "Zimbabwe",
+};
+      const currencyInfo = {
+        USD: {
+          name: "US Dollar",
+          symbol: "$",
+          description: "The world's primary reserve currency.",
+          central_bank: "Federal Reserve",
+          inflation_rate: "2.4%",
+          interest_rate: "5.25%",
+        },
+        EUR: {
+          name: "Euro",
+          symbol: "€",
+          description:
+            "The official currency of 19 of the 27 member states of the EU.",
+          central_bank: "European Central Bank",
+          inflation_rate: "2.9%",
+          interest_rate: "4.5%",
+        },
+        GBP: {
+          name: "British Pound",
+          symbol: "£",
+          description: "The official currency of the United Kingdom.",
+          central_bank: "Bank of England",
+          inflation_rate: "3.2%",
+          interest_rate: "5.0%",
+        },
+        JPY: {
+          name: "Japanese Yen",
+          symbol: "¥",
+          description: "The official currency of Japan.",
+          central_bank: "Bank of Japan",
+          inflation_rate: "1.8%",
+          interest_rate: "0.1%",
+        },
+        INR: {
+          name: "Indian Rupee",
+          symbol: "₹",
+          description: "The official currency of India.",
+          central_bank: "Reserve Bank of India",
+          inflation_rate: "4.5%",
+          interest_rate: "6.5%",
+        },
+        CNY: {
+          name: "Chinese Yuan",
+          symbol: "¥",
+          description: "The official currency of China.",
+          central_bank: "People's Bank of China",
+          inflation_rate: "2.0%",
+          interest_rate: "3.45%",
+        },
+        CAD: {
+          name: "Canadian Dollar",
+          symbol: "C$",
+          description: "The official currency of Canada.",
+          central_bank: "Bank of Canada",
+          inflation_rate: "2.9%",
+          interest_rate: "4.75%",
+        },
+        AUD: {
+          name: "Australian Dollar",
+          symbol: "A$",
+          description: "The official currency of Australia.",
+          central_bank: "Reserve Bank of Australia",
+          inflation_rate: "3.4%",
+          interest_rate: "4.35%",
+        },
+        CHF: {
+          name: "Swiss Franc",
+          symbol: "Fr",
+          description:
+            "The official currency of Switzerland and Liechtenstein.",
+          central_bank: "Swiss National Bank",
+          inflation_rate: "1.4%",
+          interest_rate: "1.75%",
+        },
+        SGD: {
+          name: "Singapore Dollar",
+          symbol: "S$",
+          description: "The official currency of Singapore.",
+          central_bank: "Monetary Authority of Singapore",
+          inflation_rate: "2.7%",
+          interest_rate: "3.68%",
+        },
+        MXN: {
+          name: "Mexican Peso",
+          symbol: "$",
+          description: "The official currency of Mexico.",
+          central_bank: "Bank of Mexico",
+          inflation_rate: "4.8%",
+          interest_rate: "11.25%",
+        },
+        BRL: {
+          name: "Brazilian Real",
+          symbol: "R$",
+          description: "The official currency of Brazil.",
+          central_bank: "Central Bank of Brazil",
+          inflation_rate: "4.5%",
+          interest_rate: "10.75%",
+        },
+        ZAR: {
+          name: "South African Rand",
+          symbol: "R",
+          description: "The official currency of South Africa.",
+          central_bank: "South African Reserve Bank",
+          inflation_rate: "5.4%",
+          interest_rate: "8.25%",
+        },
+        RUB: {
+          name: "Russian Ruble",
+          symbol: "₽",
+          description: "The official currency of Russia.",
+          central_bank: "Central Bank of Russia",
+          inflation_rate: "7.4%",
+          interest_rate: "16.0%",
+        },
+        KRW: {
+          name: "South Korean Won",
+          symbol: "₩",
+          description: "The official currency of South Korea.",
+          central_bank: "Bank of Korea",
+          inflation_rate: "2.8%",
+          interest_rate: "3.5%",
+        },
+        SAR: {
+          name: "Saudi Riyal",
+          symbol: "ر.س",
+          description: "The official currency of Saudi Arabia.",
+          central_bank: "Saudi Central Bank",
+          inflation_rate: "1.6%",
+          interest_rate: "5.75%",
+        },
+        ARS: {
+          name: "Argentine Peso",
+          symbol: "$",
+          description: "The official currency of Argentina.",
+          central_bank: "Central Bank of Argentina",
+          inflation_rate: "254.2%",
+          interest_rate: "133%",
+        },
+        AED: {
+          name: "United Arab Emirates Dirham",
+          symbol: "د.إ",
+          description: "The official currency of the UAE.",
+          central_bank: "Central Bank of the UAE",
+          inflation_rate: "3.5%",
+          interest_rate: "5.4%",
+        },
+        IDR: {
+          name: "Indonesian Rupiah",
+          symbol: "Rp",
+          description: "The official currency of Indonesia.",
+          central_bank: "Bank Indonesia",
+          inflation_rate: "2.6%",
+          interest_rate: "6.0%",
+        },
+        TRY: {
+          name: "Turkish Lira",
+          symbol: "₺",
+          description: "The official currency of Turkey.",
+          central_bank: "Central Bank of Turkey",
+          inflation_rate: "61.5%",
+          interest_rate: "50.0%",
+        },
+        MYR: {
+          name: "Malaysian Ringgit",
+          symbol: "RM",
+          description: "The official currency of Malaysia.",
+          central_bank: "Bank Negara Malaysia",
+          inflation_rate: "1.8%",
+          interest_rate: "3.0%",
+        },
+      };
+
+      // Popular currency pairs
+      const popularPairs = [
+        { from: "USD", to: "EUR" },
+        { from: "EUR", to: "GBP" },
+        { from: "USD", to: "JPY" },
+        { from: "GBP", to: "USD" },
+        { from: "USD", to: "CAD" },
+        { from: "USD", to: "INR" },
+        { from: "EUR", to: "CHF" },
+        { from: "AUD", to: "USD" },
+      ];
+
+      // API Base URL
+      const BASE_URL =
+        "https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies";
+
+      // DOM Elements
+      const fromDropdown = document.querySelector("#from-dropdown");
+      const toDropdown = document.querySelector("#to-dropdown");
+      const fromInput = document.querySelector("#from");
+      const toInput = document.querySelector("#to");
+      const fromText = document.querySelector("#from-text");
+      const toText = document.querySelector("#to-text");
+      const fromFlag = document.querySelector("#from-flag");
+      const toFlag = document.querySelector("#to-flag");
+      const fromMenu = document.querySelector("#from-menu");
+      const toMenu = document.querySelector("#to-menu");
+      const fromSearch = document.querySelector("#from-search");
+      const toSearch = document.querySelector("#to-search");
+      const fromCurrenciesList = document.querySelector(
+        "#from-currencies-list"
+      );
+      const toCurrenciesList = document.querySelector("#to-currencies-list");
+      const msg = document.querySelector(".msg");
+      const form = document.querySelector("#converter-form");
+      const swapButton = document.querySelector("#swap-button");
+      const themeToggle = document.querySelector("#theme-toggle");
+      const popularPairsContainer = document.querySelector("#popular-pairs");
+      const savedConversionsContainer =
+        document.querySelector("#saved-conversions");
+      const saveCurrentButton = document.querySelector("#save-current");
+      const currencyInfoContainer = document.querySelector("#currency-info");
+      const historyRangeButtons =
+        document.querySelectorAll(".history-range-btn");
+      const chartLoading = document.querySelector("#chart-loading");
+      const chartType = document.querySelector("#chart-type");
+      const downloadChartBtn = document.querySelector("#download-chart");
+      const chartMinValue = document.querySelector("#chart-min-value");
+      const chartMaxValue = document.querySelector("#chart-max-value");
+      const chartAvgValue = document.querySelector("#chart-avg-value");
+      const compareButton = document.querySelector("#compare-button");
+      const currencyComparison = document.querySelector("#currency-comparison");
+      const closeComparison = document.querySelector("#close-comparison");
+      const compareDropdown = document.querySelector("#compare-dropdown");
+      const compareMenu = document.querySelector("#compare-menu");
+      const compareSearch = document.querySelector("#compare-search");
+      const compareCurrenciesList = document.querySelector(
+        "#compare-currencies-list"
+      );
+      const comparisonTags = document.querySelector("#comparison-tags");
+      const comparisonTableBody = document.querySelector(
+        "#comparison-table-body"
+      );
+      const comparisonBaseCurrency = document.querySelector(
+        "#comparison-base-currency"
+      );
+      const comparisonBaseFlag = document.querySelector(
+        "#comparison-base-flag"
+      );
+      const autoRefreshToggle = document.querySelector("#auto-refresh");
+      const quickAmount = document.querySelector("#quick-amount");
+      const quickCurrency = document.querySelector("#quick-currency");
+      const quickResults = document.querySelector("#quick-results");
+
+      // Chart instance
+      let rateChart;
+      let currentHistoryRange = 7;
+      let autoRefreshInterval;
+      let selectedComparisonCurrencies = [];
+      let allCurrencyRates = {};
+      let cachedRates = {};
+      let candlestickData = {};
+
+      // Initialize the application
+      document.addEventListener("DOMContentLoaded", () => {
+        initializeCustomDropdowns();
+        setupEventListeners();
+        loadSavedConversions();
+        loadPopularPairs();
+        initializeChart();
+        setupQuickCalculator();
+        initializeComparisonFeature();
+
+        // Check for saved theme
+        if (
+          localStorage.getItem("theme") === "dark" ||
+          (!localStorage.getItem("theme") &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches)
+        ) {
+          document.documentElement.classList.add("dark");
+        } else {
+          document.documentElement.classList.remove("dark");
+        }
+
+        // Initial conversion
+        updateExchangeRate();
+      });
+
+      // Initialize custom dropdowns with flags
+      function initializeCustomDropdowns() {
+        // Create dropdown items for both dropdowns
+        populateDropdown(fromCurrenciesList, "from");
+        populateDropdown(toCurrenciesList, "to");
+        populateDropdown(compareCurrenciesList, "compare");
+
+        // Set initial values
+        setDropdownValue(fromDropdown, "USD");
+        setDropdownValue(toDropdown, "INR");
+
+        // Add click handlers to toggle dropdowns
+        document.querySelectorAll(".dropdown-selected").forEach((selected) => {
+          selected.addEventListener("click", function (e) {
+            e.stopPropagation(); // Prevent event from bubbling up
+            const menu = this.nextElementSibling;
+            const isOpen = !menu.classList.contains("hidden");
+
+            // Close all other dropdowns first
+            document.querySelectorAll(".dropdown-menu").forEach((m) => {
+              m.classList.add("hidden");
+            });
+
+            // Toggle this dropdown
+            if (isOpen) {
+              menu.classList.add("hidden");
+              this.setAttribute("aria-expanded", "false");
+            } else {
+              menu.classList.remove("hidden");
+              this.setAttribute("aria-expanded", "true");
+              // Focus search input if exists
+              const searchInput = menu.querySelector('input[type="text"]');
+              if (searchInput) {
+                searchInput.focus();
+                searchInput.value = "";
+              }
+            }
+          });
+        });
+
+        // Close dropdowns when clicking outside
+        document.addEventListener("click", function (e) {
+          if (!e.target.closest(".custom-dropdown")) {
+            document.querySelectorAll(".dropdown-menu").forEach((menu) => {
+              menu.classList.add("hidden");
+              const selected = menu.previousElementSibling;
+              if (selected) {
+                selected.setAttribute("aria-expanded", "false");
+              }
+            });
+          }
+        });
+
+        // Setup search functionality
+        setupSearchFunctionality(fromSearch, fromCurrenciesList);
+        setupSearchFunctionality(toSearch, toCurrenciesList);
+        setupSearchFunctionality(compareSearch, compareCurrenciesList);
+      }
+
+      // Setup search functionality for dropdowns
+      function setupSearchFunctionality(searchInput, currenciesList) {
+        if (!searchInput) return;
+
+        searchInput.addEventListener("input", function () {
+          const searchTerm = this.value.toLowerCase();
+          const items = currenciesList.querySelectorAll(".dropdown-item");
+
+          items.forEach((item) => {
+            const currencyCode = item.dataset.value;
+            const countryCode = countryList[currencyCode];
+            const countryName = countryNames[countryCode] || "";
+
+            if (
+              currencyCode.toLowerCase().includes(searchTerm) ||
+              countryName.toLowerCase().includes(searchTerm)
+            ) {
+              item.style.display = "flex";
+            } else {
+              item.style.display = "none";
+            }
+          });
+        });
+      }
+
+      // Populate dropdown with currency options
+      function populateDropdown(menuElement, inputId) {
+        if (!menuElement) return;
+
+        let html = "";
+
+        // Define a list of popular currencies
+        const popularCurrencies = [
+          "USD",
+          "EUR",
+          "GBP",
+          "JPY",
+          "AUD",
+          "CAD",
+          "CHF",
+          "INR",
+          "CNY",
+          "RUB",
+        ];
+
+        // First, display popular currencies
+        for (let currCode of popularCurrencies) {
+          const countryCode = countryList[currCode];
+          const countryName = countryNames[countryCode] || "Unknown Country";
+
+          html += `
+        <div class="dropdown-item" data-value="${currCode}" role="option">
+          <img src="https://flagsapi.com/${countryCode}/flat/64.png" alt="${currCode} flag" class="w-5 h-5 inline mr-2">
+          <span class="text-slate-900 dark:text-white font-semibold">${currCode}</span>
+          <span class="text-gray-500 dark:text-gray-200 text-sm ml-2">- ${countryName}</span>
+          <span class="badge bg-green-600 dark:bg-green-700 text-white text-xs rounded-full ml-2.5 px-2 py-0.5">Popular</span>
         </div>
+      `;
+        }
 
-        <h1>Currency Converter</h1>
-        <form action="">
-            <div class="amount">
-                <p>Enter Amount</p>
-                <input type="text" id="amount" value="1">
-                <p class="warning"></p>
+        // Sort remaining currencies alphabetically
+        const sortedCurrencies = Object.keys(countryList).sort();
+
+        // Display remaining currencies
+        for (let currCode of sortedCurrencies) {
+          // Skip the popular currencies that are already added
+          if (!popularCurrencies.includes(currCode)) {
+            const countryCode = countryList[currCode];
+            const countryName = countryNames[countryCode] || "Unknown Country";
+
+            html += `
+          <div class="dropdown-item" data-value="${currCode}" role="option">
+            <img src="https://flagsapi.com/${countryCode}/flat/64.png" alt="${currCode} flag" class="w-5 h-5 inline mr-2">
+            <span class="text-slate-900 dark:text-white font-semibold">${currCode}</span>
+            <span class="text-gray-500 dark:text-gray-200 text-sm ml-2">- ${countryName}</span>
+          </div>
+        `;
+          }
+        }
+
+        menuElement.innerHTML = html;
+
+        // Add click handlers to dropdown items
+        menuElement.querySelectorAll(".dropdown-item").forEach((item) => {
+          item.addEventListener("click", function () {
+            const value = this.dataset.value;
+            const dropdown = this.closest(".custom-dropdown");
+
+            if (dropdown.id === "compare-dropdown") {
+              // For comparison dropdown, add to selected currencies
+              addComparisonCurrency(value);
+              dropdown.querySelector(".dropdown-menu").classList.add("hidden");
+            } else {
+              // For regular dropdowns, set the value
+              setDropdownValue(dropdown, value);
+              dropdown.querySelector(".dropdown-menu").classList.add("hidden");
+
+              // Trigger change event
+              const input = dropdown.querySelector('input[type="hidden"]');
+              if (input && input.value !== value) {
+                input.value = value;
+
+                // Trigger custom change event
+                const event = new Event("change", { bubbles: true });
+                input.dispatchEvent(event);
+
+                // Update exchange rate
+                updateExchangeRate();
+                updateCurrencyInfo(value);
+                if (input.id === "from" || input.id === "to") {
+                  updateHistoricalRates();
+                }
+              }
+            }
+          });
+        });
+      }
+
+      // Set dropdown value
+      function setDropdownValue(dropdown, value) {
+        const input = dropdown.querySelector('input[type="hidden"]');
+        const text = dropdown.querySelector(".dropdown-selected span");
+        const img = dropdown.querySelector(".dropdown-selected img");
+        const countryCode = countryList[value];
+
+        if (input) input.value = value;
+        if (text) text.textContent = value;
+        if (img) {
+          img.src = `https://flagsapi.com/${countryCode}/flat/64.png`;
+          img.alt = `${value} Flag`;
+        }
+      }
+
+      // Setup event listeners
+      function setupEventListeners() {
+        // Form submission
+        form.addEventListener("submit", (evt) => {
+          evt.preventDefault();
+          updateExchangeRate();
+        });
+
+        // Swap currencies handler
+        swapButton.addEventListener("click", () => {
+          const fromValue = fromInput.value;
+          const toValue = toInput.value;
+
+          // Swap values
+          setDropdownValue(fromDropdown, toValue);
+          setDropdownValue(toDropdown, fromValue);
+
+          // Update exchange rate
+          updateExchangeRate();
+
+          // Add rotation animation
+          swapButton.classList.add("rotate-360");
+
+          // Remove the animation class after it finishes (to enable it again on subsequent clicks)
+          swapButton.addEventListener("animationend", () => {
+            swapButton.classList.remove("rotate-360");
+          });
+        });
+
+        // Theme toggle
+        themeToggle.addEventListener("click", () => {
+          document.documentElement.classList.toggle("dark");
+          localStorage.setItem(
+            "theme",
+            document.documentElement.classList.contains("dark")
+              ? "dark"
+              : "light"
+          );
+
+          // Update chart theme if it exists
+          if (rateChart) {
+            const isDark = document.documentElement.classList.contains("dark");
+            rateChart.options.scales.x.grid.color = isDark
+              ? "rgba(255, 255, 255, 0.1)"
+              : "rgba(0, 0, 0, 0.1)";
+            rateChart.options.scales.y.grid.color = isDark
+              ? "rgba(255, 255, 255, 0.1)"
+              : "rgba(0, 0, 0, 0.1)";
+            rateChart.options.scales.x.ticks.color = isDark
+              ? "#94a3b8"
+              : "#64748b";
+            rateChart.options.scales.y.ticks.color = isDark
+              ? "#94a3b8"
+              : "#64748b";
+            rateChart.update();
+          }
+
+          // Refresh Lucide icons
+          lucide.createIcons();
+        });
+
+        // Save current conversion
+        saveCurrentButton.addEventListener("click", saveCurrentConversion);
+
+        // History range buttons
+        historyRangeButtons.forEach((btn) => {
+          btn.addEventListener("click", () => {
+            historyRangeButtons.forEach((b) =>
+              b.classList.remove(
+                "active-range",
+                "bg-primary-50",
+                "text-primary-600",
+                "dark:bg-primary-900/30",
+                "dark:text-primary-400"
+              )
+            );
+            btn.classList.add(
+              "active-range",
+              "bg-primary-50",
+              "text-primary-600",
+              "dark:bg-primary-900/30",
+              "dark:text-primary-400"
+            );
+            currentHistoryRange = parseInt(btn.dataset.range);
+            updateHistoricalRates();
+          });
+        });
+
+        // Chart type change
+        chartType.addEventListener("change", () => {
+          updateHistoricalRates();
+        });
+
+        // Download chart
+        downloadChartBtn.addEventListener("click", downloadChart);
+
+        // Compare button
+        compareButton.addEventListener("click", () => {
+          currencyComparison.classList.remove("hidden");
+          currencyComparison.classList.add("fade-in");
+
+          // Set the base currency for comparison
+          comparisonBaseCurrency.textContent = fromInput.value;
+          comparisonBaseFlag.src = `https://flagsapi.com/${
+            countryList[fromInput.value]
+          }/flat/64.png`;
+          comparisonBaseFlag.alt = `${fromInput.value} Flag`;
+
+          updateCurrencyComparison();
+        });
+
+        // Close comparison
+        closeComparison.addEventListener("click", () => {
+          currencyComparison.classList.add("hidden");
+        });
+
+        // Auto-refresh toggle
+        autoRefreshToggle.addEventListener("change", () => {
+          if (autoRefreshToggle.checked) {
+            // Start auto-refresh (every 30 seconds)
+            autoRefreshInterval = setInterval(() => {
+              updateExchangeRate();
+              showToast("Rates refreshed automatically", "info");
+            }, 30000);
+            showToast("Auto-refresh enabled", "success");
+          } else {
+            // Stop auto-refresh
+            clearInterval(autoRefreshInterval);
+            showToast("Auto-refresh disabled", "info");
+          }
+        });
+
+        // Quick calculator inputs
+        quickAmount.addEventListener("input", updateQuickCalculator);
+        quickCurrency.addEventListener("change", updateQuickCalculator);
+
+        // Amount input validation
+        document
+          .querySelector("#amount")
+          .addEventListener("input", function () {
+            const warning = document.querySelector(".warning");
+            if (isNaN(this.value) || this.value <= 0) {
+              warning.textContent = "Please enter a valid positive number";
+              warning.classList.remove("hidden");
+            } else {
+              warning.classList.add("hidden");
+            }
+          });
+      }
+
+      // Update exchange rate
+      async function updateExchangeRate() {
+        let amount = document.querySelector("#amount");
+        let amtVal = amount.value;
+        if (amtVal === "" || amtVal < 1 || isNaN(amtVal)) {
+          amtVal = 1;
+          amount.value = "1";
+        }
+
+        try {
+          msg.innerHTML =
+            '<div class="flex justify-center"><div class="loading-spinner"></div></div>';
+
+          const URL = `${BASE_URL}/${fromInput.value.toLowerCase()}.json`;
+
+          // Check if we have cached data that's less than 5 minutes old
+          const cacheKey = `${fromInput.value.toLowerCase()}_${Date.now()}`;
+          const cachedData = cachedRates[fromInput.value.toLowerCase()];
+
+          let data;
+          if (cachedData && Date.now() - cachedData.timestamp < 300000) {
+            // Use cached data if it's less than 5 minutes old
+            data = cachedData.data;
+          } else {
+            // Fetch fresh data
+            let response = await fetch(URL);
+
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+
+            data = await response.json();
+
+            // Cache the data with timestamp
+            cachedRates[fromInput.value.toLowerCase()] = {
+              data: data,
+              timestamp: Date.now(),
+            };
+          }
+
+          let rate =
+            data[fromInput.value.toLowerCase()][toInput.value.toLowerCase()];
+          let finalAmt = (amtVal * rate).toFixed(2);
+
+          // Store all currency rates for quick calculator
+          allCurrencyRates = data[fromInput.value.toLowerCase()];
+
+          msg.innerHTML = `
+              <div class="flex flex-col items-center">
+                <span class="text-lg font-semibold">${amtVal} ${
+            fromInput.value
+          } = ${finalAmt} ${toInput.value}</span>
+                <span class="text-xs text-slate-500 dark:text-gray-300/50 mt-1">1 ${
+                  fromInput.value
+                } = ${rate.toFixed(6)} ${toInput.value}</span>
+                <span class="text-xs text-slate-500 dark:text-gray-300/50">1 ${
+                  toInput.value
+                } = ${(1 / rate).toFixed(6)} ${fromInput.value}</span>
+              </div>
+            `;
+
+          // Add pulse animation to show fresh data
+          msg.classList.add("pulse");
+          setTimeout(() => {
+            msg.classList.remove("pulse");
+          }, 2000);
+
+          // Update currency info
+          updateCurrencyInfo(toInput.value);
+
+          // Update historical rates
+          updateHistoricalRates();
+
+          // Update quick calculator
+          updateQuickCalculator();
+        } catch (error) {
+          msg.innerHTML = `<div class="flex items-center justify-center gap-2 text-red-500"><i data-lucide="alert-circle" class="w-4 h-4"></i><span>Could not fetch exchange rate: ${error.message}</span></div>`;
+          console.error("Error fetching exchange rate:", error);
+          lucide.createIcons();
+        }
+      }
+
+      // Initialize chart
+      function initializeChart() {
+        const ctx = document.getElementById("rateChart").getContext("2d");
+        const isDark = document.documentElement.classList.contains("dark");
+
+        rateChart = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: "Exchange Rate",
+                data: [],
+                borderColor: "#000000",
+                backgroundColor: isDark
+                  ? "rgba(229, 231, 235, 0.2)" // closer to gray-200/20
+                  : "rgba(0, 0, 0, 0.05)",
+
+                borderWidth: 2,
+                tension: 0.4,
+                fill: true,
+                pointBackgroundColor: "#000000",
+                pointBorderColor: isDark ? "#e9ecef" : "#ced4da", // lighter gray border in dark
+                pointRadius: 5,
+                pointHoverRadius: 8,
+                pointBorderWidth: 2,
+                pointHoverBorderWidth: 3,
+                pointHoverBackgroundColor: "#000000",
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: false,
+              },
+              tooltip: {
+                mode: "index",
+                intersect: false,
+                backgroundColor: isDark ? "#121212" : "#ffffff", // deeper dark tooltip background
+                titleColor: isDark ? "#f8f9fa" : "#000000",
+                bodyColor: isDark ? "#e9ecef" : "#343a40",
+                borderColor: isDark ? "#343a40" : "#ced4da",
+                borderWidth: 1,
+                padding: 10,
+                cornerRadius: 8,
+                titleFont: {
+                  size: 14,
+                  weight: "bold",
+                },
+                bodyFont: {
+                  size: 13,
+                },
+                callbacks: {
+                  label: function (context) {
+                    if (chartType.value === "candlestick") {
+                      const dataPoint = candlestickData[context.dataIndex];
+                      if (dataPoint) {
+                        return [
+                          `Open: ${dataPoint.open.toFixed(4)}`,
+                          `High: ${dataPoint.high.toFixed(4)}`,
+                          `Low: ${dataPoint.low.toFixed(4)}`,
+                          `Close: ${dataPoint.close.toFixed(4)}`,
+                        ];
+                      }
+                      return "";
+                    }
+                    return `Rate: ${context.raw.toFixed(4)}`;
+                  },
+                },
+              },
+            },
+            scales: {
+              x: {
+                grid: {
+                  color: isDark
+                    ? "rgba(255, 255, 255, 0.08)"
+                    : "rgba(0, 0, 0, 0.05)", // grid slightly brighter
+                  drawBorder: false,
+                },
+                ticks: {
+                  color: isDark ? "#e9ecef" : "#495057", // brighter gray for ticks
+                  font: {
+                    size: 11,
+                  },
+                  maxRotation: 0,
+                  padding: 8,
+                },
+              },
+              y: {
+                grid: {
+                  color: isDark
+                    ? "rgba(255, 255, 255, 0.08)"
+                    : "rgba(0, 0, 0, 0.05)",
+                  drawBorder: false,
+                },
+                ticks: {
+                  color: isDark ? "#e9ecef" : "#495057",
+                  font: {
+                    size: 11,
+                  },
+                  padding: 8,
+                },
+                beginAtZero: false,
+              },
+            },
+            interaction: {
+              mode: "index",
+              intersect: false,
+            },
+            elements: {
+              line: {
+                borderWidth: 2,
+              },
+              point: {
+                borderWidth: 2,
+                hoverBorderWidth: 3,
+                hoverRadius: 8,
+              },
+            },
+          },
+        });
+
+        // Update historical rates initially
+        updateHistoricalRates();
+      }
+
+      // Update historical rates
+      async function updateHistoricalRates() {
+        if (!rateChart) return;
+
+        chartLoading.classList.remove("hidden");
+
+        try {
+          // Generate dates for the past N days
+          const dates = [];
+          const today = new Date();
+
+          for (let i = currentHistoryRange; i >= 0; i--) {
+            const date = new Date();
+            date.setDate(today.getDate() - i);
+            const formattedDate = date.toISOString().split("T")[0];
+            dates.push(formattedDate);
+          }
+
+          // Fetch historical data
+          const rates = [];
+          const ohlcData = []; // For candlestick chart
+
+          for (let i = 0; i < dates.length; i++) {
+            const date = dates[i];
+            const url = `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@${date}/v1/currencies/${fromInput.value.toLowerCase()}.json`;
+            const response = await fetch(url);
+
+            if (response.ok) {
+              const data = await response.json();
+              const rate =
+                data[fromInput.value.toLowerCase()][
+                  toInput.value.toLowerCase()
+                ];
+              rates.push(rate);
+
+              // For candlestick chart, we need to simulate OHLC data
+              // Since we only have daily closing rates, we'll create synthetic OHLC data
+              if (i > 0) {
+                const prevRate = rates[i - 1];
+                const volatility = 0.005; // 0.5% volatility for simulation
+                const high =
+                  Math.max(rate, prevRate) * (1 + Math.random() * volatility);
+                const low =
+                  Math.min(rate, prevRate) * (1 - Math.random() * volatility);
+
+                ohlcData.push({
+                  date: date,
+                  open: prevRate,
+                  high: high,
+                  low: low,
+                  close: rate,
+                });
+              }
+            } else {
+              // If we can't get data for this date, use the previous rate or null
+              rates.push(rates.length > 0 ? rates[rates.length - 1] : null);
+
+              if (i > 0 && rates[i - 1] !== null) {
+                const prevRate = rates[i - 1];
+                ohlcData.push({
+                  date: date,
+                  open: prevRate,
+                  high: prevRate * 1.002,
+                  low: prevRate * 0.998,
+                  close: prevRate,
+                });
+              }
+            }
+          }
+
+          // Filter out null values
+          const validDates = [];
+          const validRates = [];
+          const validOHLC = [];
+
+          for (let i = 0; i < dates.length; i++) {
+            if (rates[i] !== null) {
+              validDates.push(formatDate(dates[i]));
+              validRates.push(rates[i]);
+
+              if (i > 0) {
+                validOHLC.push(ohlcData[i - 1]);
+              }
+            }
+          }
+
+          // Calculate min, max, avg values
+          if (validRates.length > 0) {
+            const min = Math.min(...validRates);
+            const max = Math.max(...validRates);
+            const avg =
+              validRates.reduce((a, b) => a + b, 0) / validRates.length;
+
+            chartMinValue.textContent = `Min: ${min.toFixed(4)}`;
+            chartMaxValue.textContent = `Max: ${max.toFixed(4)}`;
+            chartAvgValue.textContent = `Avg: ${avg.toFixed(4)}`;
+          }
+
+          // Update chart based on selected type
+          const selectedChartType = chartType.value;
+
+          if (selectedChartType === "candlestick") {
+            // Store candlestick data for tooltip
+            candlestickData = {};
+            validOHLC.forEach((data, index) => {
+              candlestickData[index] = data;
+            });
+
+            // Destroy existing chart
+            rateChart.destroy();
+
+            // Create new candlestick chart
+            const ctx = document.getElementById("rateChart").getContext("2d");
+            const isDark = document.documentElement.classList.contains("dark");
+
+            // Create custom candlestick chart using Chart.js
+            rateChart = new Chart(ctx, {
+              type: "bar",
+              data: {
+                labels: validDates,
+                datasets: [
+                  {
+                    label: `${fromInput.value} to ${toInput.value}`,
+                    data: validOHLC.map((data) => ({
+                      x: data.date,
+                      o: data.open,
+                      h: data.high,
+                      l: data.low,
+                      c: data.close,
+                    })),
+                    backgroundColor: validOHLC.map((data) =>
+                      data.open <= data.close
+                        ? "rgba(0, 177, 106, 0.2)"
+                        : "rgba(255, 69, 58, 0.2)"
+                    ),
+                    borderColor: validOHLC.map((data) =>
+                      data.open <= data.close
+                        ? "rgba(0, 177, 106, 1)"
+                        : "rgba(255, 69, 58, 1)"
+                    ),
+                    borderWidth: 1,
+                  },
+                ],
+              },
+              options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                  legend: {
+                    display: false,
+                  },
+                  tooltip: {
+                    mode: "index",
+                    intersect: false,
+                    backgroundColor: isDark ? "#121212" : "#ffffff",
+                    titleColor: isDark ? "#f8f9fa" : "#000000",
+                    bodyColor: isDark ? "#e9ecef" : "#343a40",
+                    borderColor: isDark ? "#343a40" : "#ced4da",
+                    borderWidth: 1,
+                    padding: 10,
+                    cornerRadius: 8,
+                    titleFont: {
+                      size: 14,
+                      weight: "bold",
+                    },
+                    bodyFont: {
+                      size: 13,
+                    },
+                    callbacks: {
+                      label: function (context) {
+                        const dataPoint = validOHLC[context.dataIndex];
+                        if (dataPoint) {
+                          return [
+                            `Open: ${dataPoint.open.toFixed(4)}`,
+                            `High: ${dataPoint.high.toFixed(4)}`,
+                            `Low: ${dataPoint.low.toFixed(4)}`,
+                            `Close: ${dataPoint.close.toFixed(4)}`,
+                          ];
+                        }
+                        return "";
+                      },
+                    },
+                  },
+                },
+                scales: {
+                  x: {
+                    grid: {
+                      color: isDark
+                        ? "rgba(255, 255, 255, 0.08)"
+                        : "rgba(0, 0, 0, 0.05)",
+                      drawBorder: false,
+                    },
+                    ticks: {
+                      color: isDark ? "#e9ecef" : "#495057",
+                      font: {
+                        size: 11,
+                      },
+                      maxRotation: 0,
+                      padding: 8,
+                    },
+                  },
+                  y: {
+                    grid: {
+                      color: isDark
+                        ? "rgba(255, 255, 255, 0.08)"
+                        : "rgba(0, 0, 0, 0.05)",
+                      drawBorder: false,
+                    },
+                    ticks: {
+                      color: isDark ? "#e9ecef" : "#495057",
+                      font: {
+                        size: 11,
+                      },
+                      padding: 8,
+                    },
+                    beginAtZero: false,
+                  },
+                },
+                interaction: {
+                  mode: "index",
+                  intersect: false,
+                },
+              },
+              plugins: [
+                {
+                  id: "candlestick",
+                  beforeDraw: function (chart) {
+                    const ctx = chart.ctx;
+                    const xAxis = chart.scales.x;
+                    const yAxis = chart.scales.y;
+                    const dataset = chart.data.datasets[0];
+
+                    // Draw candlestick wicks
+                    ctx.save();
+                    ctx.lineWidth = 1;
+
+                    dataset.data.forEach((dataPoint, index) => {
+                      const x = xAxis.getPixelForValue(index);
+                      const yHigh = yAxis.getPixelForValue(dataPoint.h);
+                      const yLow = yAxis.getPixelForValue(dataPoint.l);
+                      const yOpen = yAxis.getPixelForValue(dataPoint.o);
+                      const yClose = yAxis.getPixelForValue(dataPoint.c);
+
+                      // Determine if it's an up or down candle
+                      const isUp = dataPoint.o <= dataPoint.c;
+
+                      // Set wick color
+                      ctx.strokeStyle = isUp
+                        ? "rgba(0, 177, 106, 1)"
+                        : "rgba(255, 69, 58, 1)";
+
+                      // Draw the wick (high to low)
+                      ctx.beginPath();
+                      ctx.moveTo(x, yHigh);
+                      ctx.lineTo(x, yLow);
+                      ctx.stroke();
+                    });
+
+                    ctx.restore();
+                  },
+                },
+              ],
+            });
+          } else if (selectedChartType === "bar") {
+            // Update to bar chart
+            if (rateChart.config.type !== "bar") {
+              rateChart.destroy();
+
+              const ctx = document.getElementById("rateChart").getContext("2d");
+              const isDark =
+                document.documentElement.classList.contains("dark");
+
+              rateChart = new Chart(ctx, {
+                type: "bar",
+                data: {
+                  labels: validDates,
+                  datasets: [
+                    {
+                      label: `${fromInput.value} to ${toInput.value}`,
+                      data: validRates,
+                      backgroundColor: isDark
+                        ? "rgba(229, 231, 235, 0.2)"
+                        : "rgba(0, 0, 0, 0.1)",
+                      borderColor: "#000000",
+                      borderWidth: 1,
+                    },
+                  ],
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      display: false,
+                    },
+                    tooltip: {
+                      mode: "index",
+                      intersect: false,
+                      backgroundColor: isDark ? "#121212" : "#ffffff",
+                      titleColor: isDark ? "#f8f9fa" : "#000000",
+                      bodyColor: isDark ? "#e9ecef" : "#343a40",
+                      borderColor: isDark ? "#343a40" : "#ced4da",
+                      borderWidth: 1,
+                      padding: 10,
+                      cornerRadius: 8,
+                      titleFont: {
+                        size: 14,
+                        weight: "bold",
+                      },
+                      bodyFont: {
+                        size: 13,
+                      },
+                    },
+                  },
+                  scales: {
+                    x: {
+                      grid: {
+                        color: isDark
+                          ? "rgba(255, 255, 255, 0.08)"
+                          : "rgba(0, 0, 0, 0.05)",
+                        drawBorder: false,
+                      },
+                      ticks: {
+                        color: isDark ? "#e9ecef" : "#495057",
+                        font: {
+                          size: 11,
+                        },
+                        maxRotation: 0,
+                        padding: 8,
+                      },
+                    },
+                    y: {
+                      grid: {
+                        color: isDark
+                          ? "rgba(255, 255, 255, 0.08)"
+                          : "rgba(0, 0, 0, 0.05)",
+                        drawBorder: false,
+                      },
+                      ticks: {
+                        color: isDark ? "#e9ecef" : "#495057",
+                        font: {
+                          size: 11,
+                        },
+                        padding: 8,
+                      },
+                      beginAtZero: false,
+                    },
+                  },
+                  interaction: {
+                    mode: "index",
+                    intersect: false,
+                  },
+                },
+              });
+            } else {
+              // Update existing bar chart
+              rateChart.data.labels = validDates;
+              rateChart.data.datasets[0].data = validRates;
+              rateChart.data.datasets[0].label = `${fromInput.value} to ${toInput.value}`;
+              rateChart.update();
+            }
+          } else {
+            // Line chart (default)
+            if (rateChart.config.type !== "line") {
+              rateChart.destroy();
+
+              const ctx = document.getElementById("rateChart").getContext("2d");
+              const isDark =
+                document.documentElement.classList.contains("dark");
+
+              rateChart = new Chart(ctx, {
+                type: "line",
+                data: {
+                  labels: validDates,
+                  datasets: [
+                    {
+                      label: `${fromInput.value} to ${toInput.value}`,
+                      data: validRates,
+                      borderColor: "#000000",
+                      backgroundColor: isDark
+                        ? "rgba(229, 231, 235, 0.2)"
+                        : "rgba(0, 0, 0, 0.05)",
+                      borderWidth: 2,
+                      tension: 0.4,
+                      fill: true,
+                      pointBackgroundColor: "#000000",
+                      pointBorderColor: isDark ? "#e9ecef" : "#ced4da",
+                      pointRadius: 5,
+                      pointHoverRadius: 8,
+                      pointBorderWidth: 2,
+                      pointHoverBorderWidth: 3,
+                      pointHoverBackgroundColor: "#000000",
+                    },
+                  ],
+                },
+                options: {
+                  responsive: true,
+                  maintainAspectRatio: false,
+                  plugins: {
+                    legend: {
+                      display: false,
+                    },
+                    tooltip: {
+                      mode: "index",
+                      intersect: false,
+                      backgroundColor: isDark ? "#121212" : "#ffffff",
+                      titleColor: isDark ? "#f8f9fa" : "#000000",
+                      bodyColor: isDark ? "#e9ecef" : "#343a40",
+                      borderColor: isDark ? "#343a40" : "#ced4da",
+                      borderWidth: 1,
+                      padding: 10,
+                      cornerRadius: 8,
+                      titleFont: {
+                        size: 14,
+                        weight: "bold",
+                      },
+                      bodyFont: {
+                        size: 13,
+                      },
+                    },
+                  },
+                  scales: {
+                    x: {
+                      grid: {
+                        color: isDark
+                          ? "rgba(255, 255, 255, 0.08)"
+                          : "rgba(0, 0, 0, 0.05)",
+                        drawBorder: false,
+                      },
+                      ticks: {
+                        color: isDark ? "#e9ecef" : "#495057",
+                        font: {
+                          size: 11,
+                        },
+                        maxRotation: 0,
+                        padding: 8,
+                      },
+                    },
+                    y: {
+                      grid: {
+                        color: isDark
+                          ? "rgba(255, 255, 255, 0.08)"
+                          : "rgba(0, 0, 0, 0.05)",
+                        drawBorder: false,
+                      },
+                      ticks: {
+                        color: isDark ? "#e9ecef" : "#495057",
+                        font: {
+                          size: 11,
+                        },
+                        padding: 8,
+                      },
+                      beginAtZero: false,
+                    },
+                  },
+                  interaction: {
+                    mode: "index",
+                    intersect: false,
+                  },
+                  elements: {
+                    line: {
+                      borderWidth: 2,
+                    },
+                    point: {
+                      borderWidth: 2,
+                      hoverBorderWidth: 3,
+                      hoverRadius: 8,
+                    },
+                  },
+                },
+              });
+            } else {
+              // Update existing line chart
+              rateChart.data.labels = validDates;
+              rateChart.data.datasets[0].data = validRates;
+              rateChart.data.datasets[0].label = `${fromInput.value} to ${toInput.value}`;
+              rateChart.update();
+            }
+          }
+        } catch (error) {
+          console.error("Error fetching historical rates:", error);
+          showToast("Failed to load historical data", "error");
+        } finally {
+          chartLoading.classList.add("hidden");
+        }
+      }
+
+      // Download chart as image
+      function downloadChart() {
+        if (!rateChart) return;
+
+        const canvas = document.getElementById("rateChart");
+        const image = canvas.toDataURL("image/png", 1.0);
+
+        // Create download link
+        const downloadLink = document.createElement("a");
+        downloadLink.href = image;
+        downloadLink.download = `${fromInput.value}_to_${toInput.value}_chart.png`;
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+        document.body.removeChild(downloadLink);
+
+        showToast("Chart downloaded successfully", "success");
+      }
+
+      // Format date for chart display
+      function formatDate(dateString) {
+        const date = new Date(dateString);
+        return date.toLocaleDateString("en-US", {
+          month: "short",
+          day: "numeric",
+        });
+      }
+
+      // Load popular currency pairs
+      async function loadPopularPairs() {
+        popularPairsContainer.innerHTML =
+          '<div class="flex justify-center py-4"><div class="loading-spinner"></div></div>';
+
+        try {
+          const pairsHTML = [];
+
+          for (const pair of popularPairs) {
+            const url = `${BASE_URL}/${pair.from.toLowerCase()}.json`;
+            const response = await fetch(url);
+
+            if (response.ok) {
+              const data = await response.json();
+              const rate = data[pair.from.toLowerCase()][pair.to.toLowerCase()];
+
+              pairsHTML.push(`
+                  <div class="border-[1.5px] border-gray-200 dark:border-gray-300/20 currency-card p-3 bg-slate-50 dark:bg-gray-100/5 rounded-lg cursor-pointer hover:shadow-soft transition-all"
+                       data-from="${pair.from}" data-to="${pair.to}">
+                      <div class="flex justify-between items-center">
+                          <div class="flex items-center space-x-2">
+                              <img src="https://flagsapi.com/${
+                                countryList[pair.from]
+                              }/flat/32.png" alt="${
+                pair.from
+              }" class="w-5 h-5 rounded">
+                              <span class="font-medium text-slate-800 dark:text-slate-200 text-sm">${
+                                pair.from
+                              }</span>
+                          </div>
+                          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-500">
+                              <path d="M5 12h14"></path>
+                              <path d="m12 5 7 7-7 7"></path>
+                          </svg>
+                          <div class="flex items-center space-x-2">
+                              <img src="https://flagsapi.com/${
+                                countryList[pair.to]
+                              }/flat/32.png" alt="${
+                pair.to
+              }" class="w-5 h-5 rounded">
+                              <span class="font-medium text-slate-800 dark:text-slate-200 text-sm">${
+                                pair.to
+                              }</span>
+                          </div>
+                      </div>
+                      <div class="text-center mt-2 text-xs text-slate-500 dark:text-slate-400">
+                          1 ${pair.from} = ${rate.toFixed(4)} ${pair.to}
+                      </div>
+                  </div>
+                `);
+            }
+          }
+
+          popularPairsContainer.innerHTML = pairsHTML.join("");
+
+          // Add click event to popular pairs
+          document.querySelectorAll(".currency-card").forEach((card) => {
+            card.addEventListener("click", () => {
+              const fromValue = card.dataset.from;
+              const toValue = card.dataset.to;
+
+              // Update dropdown values
+              setDropdownValue(fromDropdown, fromValue);
+              setDropdownValue(toDropdown, toValue);
+
+              // Update exchange rate
+              updateExchangeRate();
+            });
+          });
+        } catch (error) {
+          popularPairsContainer.innerHTML =
+            '<p class="text-red-500 text-center text-sm py-4">Failed to load popular pairs</p>';
+          console.error("Error loading popular pairs:", error);
+        }
+      }
+
+      // Update currency information
+      function updateCurrencyInfo(currencyCode) {
+        const info = currencyInfo[currencyCode] || {
+          name: `${currencyCode} Currency`,
+          symbol: currencyCode,
+          description: "No additional information available for this currency.",
+          central_bank: "Unknown",
+          inflation_rate: "N/A",
+          interest_rate: "N/A",
+        };
+
+        currencyInfoContainer.innerHTML = `
+            <div class="flex items-center space-x-3">
+              <div class="w-10 h-10 flex items-center justify-center bg-primary-100 dark:bg-gray-200/10 rounded-full">
+                <img src="https://flagsapi.com/${
+                  countryList[currencyCode]
+                }/flat/64.png" alt="${currencyCode}" class="w-6 h-6 rounded">
+              </div>
+              <div>
+                <h3 class="font-medium text-slate-800 dark:text-slate-200 text-sm">${
+                  info.name
+                } (${currencyCode})</h3>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Symbol: <span class="text-sm font-semibold text-black dark:text-slate-400">${
+                  info.symbol
+                }</span></p>
+              </div>
             </div>
+            <p class="text-slate-600 dark:text-slate-300 text-xs mt-3 leading-relaxed">${
+              info.description
+            }</p>
 
-            <div class="dropdown">
-                <div class="from">
-                    <p>From</p>
-                    <div class="select-container">
-                        <img src="https://flagsapi.com/US/flat/64.png" alt="">
-                        <select name="from" id="from"></select>
-                    </div>
-                </div>
-                
-                <i id="ab" class="fa-solid fa-right-left"></i>
-                <div class="to">
-                    <p>To</p>
-                    <div class="select-container">
-                        <img class="ind" src="https://flagsapi.com/IN/flat/64.png" alt="">
-                        <select name="to" id="to"></select>
-                    </div>
-                </div>
+            <div class="mt-4 grid grid-cols-2 gap-2 text-xs">
+              <div class="bg-slate-50 dark:bg-gray-200/5 p-2 rounded">
+                <span class="text-slate-500 dark:text-slate-400">Central Bank:</span>
+                <p class="font-medium text-slate-800 dark:text-slate-200">${
+                  info.central_bank
+                }</p>
+              </div>
+              <div class="bg-slate-50 dark:bg-gray-200/5 p-2 rounded">
+                <span class="text-slate-500 dark:text-slate-400">Inflation Rate:</span>
+                <p class="font-medium text-slate-800 dark:text-slate-200">${
+                  info.inflation_rate
+                }</p>
+              </div>
+              <div class="bg-slate-50 dark:bg-gray-200/5 p-2 rounded">
+                <span class="text-slate-500 dark:text-slate-400">Interest Rate:</span>
+                <p class="font-medium text-slate-800 dark:text-slate-200">${
+                  info.interest_rate
+                }</p>
+              </div>
+              <div class="bg-slate-50 dark:bg-gray-200/5 p-2 rounded">
+                <span class="text-slate-500 dark:text-slate-400">Country:</span>
+                <p class="font-medium text-slate-800 dark:text-slate-200">${
+                  countryNames[countryList[currencyCode]] || "Unknown"
+                }</p>
+              </div>
             </div>
+          `;
+      }
 
-            <div class="msg">1USD = 80INR</div>
-            <button id="btnn">Get Exchange Rate
-                <i class="fa-solid fa-money-bill-transfer"></i>
+      // Save current conversion
+      function saveCurrentConversion() {
+        const from = fromInput.value;
+        const to = toInput.value;
+        const amount = document.querySelector("#amount").value || 1;
+
+        // Get existing saved conversions
+        const savedConversions = JSON.parse(
+          localStorage.getItem("savedConversions") || "[]"
+        );
+
+        // Check if this conversion already exists
+        const exists = savedConversions.some(
+          (conv) =>
+            conv.from === from && conv.to === to && conv.amount === amount
+        );
+
+        if (!exists) {
+          savedConversions.push({ from, to, amount, timestamp: Date.now() });
+          localStorage.setItem(
+            "savedConversions",
+            JSON.stringify(savedConversions)
+          );
+          loadSavedConversions();
+
+          // Show success message
+          showToast("Conversion saved successfully!", "success");
+        } else {
+          showToast("This conversion is already saved", "info");
+        }
+      }
+
+      // Show toast notification
+      function showToast(message, type = "info") {
+        const toastContainer = document.getElementById("toast-container");
+        const toast = document.createElement("div");
+
+        let bgColor, textColor, icon;
+
+        switch (type) {
+          case "success":
+            bgColor = "bg-green-50 dark:bg-green-900/30";
+            textColor = "text-green-700 dark:text-green-300";
+            icon = "check-circle";
+            break;
+          case "error":
+            bgColor = "bg-red-50 dark:bg-red-900/30";
+            textColor = "text-red-700 dark:text-red-300";
+            icon = "alert-circle";
+            break;
+          case "warning":
+            bgColor = "bg-yellow-50 dark:bg-yellow-900/30";
+            textColor = "text-yellow-700 dark:text-yellow-300";
+            icon = "alert-triangle";
+            break;
+          default: // info
+            bgColor = "bg-blue-50 dark:bg-blue-900/30";
+            textColor = "text-blue-700 dark:text-blue-300";
+            icon = "info";
+        }
+
+        toast.className = `toast-notification ${bgColor} ${textColor}`;
+        toast.innerHTML = `
+            <i data-lucide="${icon}" class="w-5 h-5"></i>
+            <span>${message}</span>
+          `;
+
+        toastContainer.appendChild(toast);
+
+        // Create Lucide icon
+        lucide.createIcons({
+          icons: {
+            [icon]: toast.querySelector(`[data-lucide="${icon}"]`),
+          },
+        });
+
+        // Show the toast
+        setTimeout(() => {
+          toast.classList.add("show");
+        }, 10);
+
+        // Remove the toast after 3 seconds
+        setTimeout(() => {
+          toast.classList.remove("show");
+          setTimeout(() => {
+            toastContainer.removeChild(toast);
+          }, 300);
+        }, 3000);
+      }
+
+      // Load saved conversions
+      function loadSavedConversions() {
+        const savedConversions = JSON.parse(
+          localStorage.getItem("savedConversions") || "[]"
+        );
+
+        if (savedConversions.length === 0) {
+          savedConversionsContainer.innerHTML =
+            '<p class="text-slate-500 dark:text-slate-400 text-center italic text-xs py-4">No saved conversions yet</p>';
+          return;
+        }
+
+        // Sort by most recent first
+        savedConversions.sort(
+          (a, b) => (b.timestamp || 0) - (a.timestamp || 0)
+        );
+
+        const html = savedConversions
+          .map(
+            (conv, index) => `
+                  <div class="saved-conversion flex justify-between items-center border-[1.5px] border-gray-200 dark:border-gray-300/10 p-2 bg-slate-50 dark:bg-gray-200/5 rounded-lg">
+                      <div class="flex items-center space-x-2">
+                          <div class="flex items-center">
+                              <img src="https://flagsapi.com/${
+                                countryList[conv.from]
+                              }/flat/32.png" alt="${
+              conv.from
+            }" class="w-4 h-4 rounded">
+                              <span class="mx-1 text-xs font-medium">${
+                                conv.amount
+                              } ${conv.from}</span>
+                              <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-slate-400 ml-1 mr-1">
+                                  <path d="M5 12h14"></path>
+                                  <path d="m12 5 7 7-7 7"></path>
+                              </svg>
+                              <img src="https://flagsapi.com/${
+                                countryList[conv.to]
+                              }/flat/32.png" alt="${
+              conv.to
+            }" class="w-4 h-4 rounded ml-1">
+                              <span class="ml-1 text-xs font-medium">${
+                                conv.to
+                              }</span>
+                          </div>
+                      </div>
+                      <div class="flex space-x-1">
+                          <button class="load-conversion p-1 text-primary-500 dark:text-gray-400 dark:hover:text-gray-300" data-index="${index}" aria-label="Load this conversion">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                  <path d="M21 2v6h-6"></path>
+                                  <path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path>
+                                  <path d="M3 22v-6h6"></path>
+                                  <path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path>
+                              </svg>
+                          </button>
+                          <button class="delete-conversion p-1 text-red-500 hover:text-red-600" data-index="${index}" aria-label="Delete this conversion">
+                              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                  <path d="M3 6h18"></path>
+                                  <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path>
+                                  <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path>
+                              </svg>
+                          </button>
+                      </div>
+                  </div>
+              `
+          )
+          .join("");
+
+        savedConversionsContainer.innerHTML = html;
+
+        // Add event listeners to buttons
+        document.querySelectorAll(".load-conversion").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const index = btn.dataset.index;
+            const conv = savedConversions[index];
+
+            // Update dropdown values
+            setDropdownValue(fromDropdown, conv.from);
+            setDropdownValue(toDropdown, conv.to);
+            document.querySelector("#amount").value = conv.amount;
+
+            // Update exchange rate
+            updateExchangeRate();
+
+            showToast("Conversion loaded", "info");
+          });
+        });
+
+        document.querySelectorAll(".delete-conversion").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const index = btn.dataset.index;
+            savedConversions.splice(index, 1);
+            localStorage.setItem(
+              "savedConversions",
+              JSON.stringify(savedConversions)
+            );
+            loadSavedConversions();
+
+            showToast("Conversion deleted", "info");
+          });
+        });
+      }
+
+      // Initialize comparison feature
+      function initializeComparisonFeature() {
+        // Populate comparison dropdown
+        populateDropdown(compareCurrenciesList, "compare");
+      }
+
+      // Add currency to comparison
+      function addComparisonCurrency(currencyCode) {
+        // Check if already added
+        if (selectedComparisonCurrencies.includes(currencyCode)) {
+          showToast(`${currencyCode} is already in comparison`, "info");
+          return;
+        }
+
+        // Add to selected currencies
+        selectedComparisonCurrencies.push(currencyCode);
+
+        // Add tag
+        const tag = document.createElement("div");
+        tag.className = "comparison-tag";
+        tag.innerHTML = `
+            <img src="https://flagsapi.com/${countryList[currencyCode]}/flat/64.png" alt="${currencyCode}" class="w-4 h-4 rounded-full">
+            <span class="text-xs font-medium">${currencyCode}</span>
+            <button class="remove-btn" data-currency="${currencyCode}" aria-label="Remove ${currencyCode}">
+              <i data-lucide="x" class="w-3 h-3 text-slate-500"></i>
             </button>
-        </form>
-    </div>
-</div>
-    <script src="app.js"></script>
-</body>
+          `;
+        comparisonTags.appendChild(tag);
+
+        // Create Lucide icon
+        lucide.createIcons({
+          icons: {
+            x: tag.querySelector('[data-lucide="x"]'),
+          },
+        });
+
+        // Add remove event
+        tag.querySelector(".remove-btn").addEventListener("click", function () {
+          const currency = this.dataset.currency;
+          removeComparisonCurrency(currency);
+        });
+
+        // Update comparison table
+        updateCurrencyComparison();
+      }
+
+      // Remove currency from comparison
+      function removeComparisonCurrency(currencyCode) {
+        // Remove from array
+        selectedComparisonCurrencies = selectedComparisonCurrencies.filter(
+          (c) => c !== currencyCode
+        );
+
+        // Remove tag
+        const tags = comparisonTags.querySelectorAll(".remove-btn");
+        tags.forEach((tag) => {
+          if (tag.dataset.currency === currencyCode) {
+            tag.closest(".comparison-tag").remove();
+          }
+        });
+
+        // Update comparison table
+        updateCurrencyComparison();
+      }
+
+      // Update currency comparison table
+      async function updateCurrencyComparison() {
+        if (selectedComparisonCurrencies.length === 0) {
+          comparisonTableBody.innerHTML = `
+              <tr>
+                <td colspan="5" class="text-center py-4 text-slate-500 dark:text-slate-400">
+                  Add currencies to compare
+                </td>
+              </tr>
+            `;
+          return;
+        }
+
+        // Show loading state
+        comparisonTableBody.innerHTML = `
+            <tr>
+              <td colspan="5" class="text-center py-4">
+                <div class="flex justify-center">
+                  <div class="loading-spinner"></div>
+                </div>
+              </td>
+            </tr>
+          `;
+
+        try {
+          // Get base currency data (from currency)
+          const baseURL = `${BASE_URL}/${fromInput.value.toLowerCase()}.json`;
+          const baseResponse = await fetch(baseURL);
+
+          if (!baseResponse.ok) {
+            throw new Error("Failed to fetch base currency data");
+          }
+
+          const baseData = await baseResponse.json();
+          const baseRates = baseData[fromInput.value.toLowerCase()];
+
+          // Get 1-day ago data
+          const yesterday = new Date();
+          yesterday.setDate(yesterday.getDate() - 1);
+          const yesterdayFormatted = yesterday.toISOString().split("T")[0];
+
+          const yesterdayURL = `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@${yesterdayFormatted}/v1/currencies/${fromInput.value.toLowerCase()}.json`;
+          const yesterdayResponse = await fetch(yesterdayURL);
+          let yesterdayRates = {};
+
+          if (yesterdayResponse.ok) {
+            const yesterdayData = await yesterdayResponse.json();
+            yesterdayRates = yesterdayData[fromInput.value.toLowerCase()];
+          }
+
+          // Get 7-day ago data
+          const sevenDaysAgo = new Date();
+          sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+          const sevenDaysAgoFormatted = sevenDaysAgo
+            .toISOString()
+            .split("T")[0];
+
+          const sevenDaysURL = `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@${sevenDaysAgoFormatted}/v1/currencies/${fromInput.value.toLowerCase()}.json`;
+          const sevenDaysResponse = await fetch(sevenDaysURL);
+          let sevenDaysRates = {};
+
+          if (sevenDaysResponse.ok) {
+            const sevenDaysData = await sevenDaysResponse.json();
+            sevenDaysRates = sevenDaysData[fromInput.value.toLowerCase()];
+          }
+
+          // Get 30-day ago data
+          const thirtyDaysAgo = new Date();
+          thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+          const thirtyDaysAgoFormatted = thirtyDaysAgo
+            .toISOString()
+            .split("T")[0];
+
+          const thirtyDaysURL = `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@${thirtyDaysAgoFormatted}/v1/currencies/${fromInput.value.toLowerCase()}.json`;
+          const thirtyDaysResponse = await fetch(thirtyDaysURL);
+          let thirtyDaysRates = {};
+
+          if (thirtyDaysResponse.ok) {
+            const thirtyDaysData = await thirtyDaysResponse.json();
+            thirtyDaysRates = thirtyDaysData[fromInput.value.toLowerCase()];
+          }
+
+          // Build table rows
+          let tableHTML = "";
+
+          for (const currency of selectedComparisonCurrencies) {
+            const currentRate = baseRates[currency.toLowerCase()] || 0;
+            const yesterdayRate =
+              yesterdayRates[currency.toLowerCase()] || currentRate;
+            const sevenDayRate =
+              sevenDaysRates[currency.toLowerCase()] || currentRate;
+            const thirtyDayRate =
+              thirtyDaysRates[currency.toLowerCase()] || currentRate;
+
+            const oneDayChange =
+              ((currentRate - yesterdayRate) / yesterdayRate) * 100;
+            const sevenDayChange =
+              ((currentRate - sevenDayRate) / sevenDayRate) * 100;
+            const thirtyDayChange =
+              ((currentRate - thirtyDayRate) / thirtyDayRate) * 100;
+
+            const getChangeHTML = (change) => {
+              const color =
+                change >= 0
+                  ? "text-green-600 dark:text-green-400"
+                  : "text-red-600 dark:text-red-400";
+              const icon =
+                change >= 0
+                  ? '<i data-lucide="trending-up" class="w-3 h-3"></i>'
+                  : '<i data-lucide="trending-down" class="w-3 h-3"></i>';
+              return `<span class="${color} flex items-center gap-1">${icon}${Math.abs(
+                change
+              ).toFixed(2)}%</span>`;
+            };
+
+            tableHTML += `
+                <tr>
+                  <td class="border-b border-slate-200 dark:border-gray-300/10 py-2">
+                    <div class="flex items-center gap-2">
+                      <img src="https://flagsapi.com/${
+                        countryList[currency]
+                      }/flat/64.png" alt="${currency}" class="w-5 h-5 rounded-full">
+                      <span class="font-medium">${currency}</span>
+                    </div>
+                  </td>
+                  <td class="border-b border-slate-200 dark:border-gray-300/10 py-2">${currentRate.toFixed(
+                    4
+                  )}</td>
+                  <td class="border-b border-slate-200 dark:border-gray-300/10 py-2">${getChangeHTML(
+                    oneDayChange
+                  )}</td>
+                  <td class="border-b border-slate-200 dark:border-gray-300/10 py-2">${getChangeHTML(
+                    sevenDayChange
+                  )}</td>
+                  <td class="border-b border-slate-200 dark:border-gray-300/10 py-2">${getChangeHTML(
+                    thirtyDayChange
+                  )}</td>
+                </tr>
+              `;
+          }
+
+          comparisonTableBody.innerHTML = tableHTML;
+
+          // Initialize Lucide icons
+          lucide.createIcons();
+        } catch (error) {
+          console.error("Error updating comparison:", error);
+          comparisonTableBody.innerHTML = `
+              <tr>
+                <td colspan="5" class="text-center py-4 text-red-500">
+                  Failed to load comparison data: ${error.message}
+                </td>
+              </tr>
+            `;
+        }
+      }
+
+      // Setup quick calculator
+      function setupQuickCalculator() {
+        // Populate quick currency dropdown
+        const popularCurrencies = [
+          "USD",
+          "EUR",
+          "GBP",
+          "JPY",
+          "INR",
+          "CNY",
+          "CAD",
+          "AUD",
+          "CHF",
+        ];
+
+        let options = "";
+        for (const currency of popularCurrencies) {
+          options += `<option value="${currency}">${currency}</option>`;
+        }
+
+        quickCurrency.innerHTML = options;
+      }
+
+      // Update quick calculator
+      function updateQuickCalculator() {
+        if (!allCurrencyRates || Object.keys(allCurrencyRates).length === 0) {
+          return;
+        }
+
+        const amount = parseFloat(quickAmount.value) || 1;
+        const baseCurrency = quickCurrency.value;
+
+        // Get top 5 major currencies (excluding the base currency)
+        const majorCurrencies = [
+          "USD",
+          "EUR",
+          "GBP",
+          "JPY",
+          "INR",
+          "CNY",
+          "CAD",
+          "AUD",
+        ]
+          .filter((curr) => curr !== baseCurrency)
+          .slice(0, 5);
+
+        let html = "";
+
+        for (const currency of majorCurrencies) {
+          // We need to convert: baseCurrency -> fromCurrency -> targetCurrency
+          // First get rate from baseCurrency to fromCurrency
+          let baseToFromRate;
+
+          if (baseCurrency === fromInput.value) {
+            baseToFromRate = 1;
+          } else {
+            // We need the inverse rate
+            baseToFromRate = 1 / allCurrencyRates[baseCurrency.toLowerCase()];
+          }
+
+          // Now get rate from fromCurrency to targetCurrency
+          const fromToTargetRate = allCurrencyRates[currency.toLowerCase()];
+
+          // Calculate final rate
+          const finalRate = baseToFromRate * fromToTargetRate;
+          const convertedAmount = amount * finalRate;
+
+          html += `
+              <div class="flex justify-between items-center p-2 bg-slate-50 dark:bg-gray-200/5 rounded-md">
+                <div class="flex items-center gap-2">
+                  <img src="https://flagsapi.com/${
+                    countryList[currency]
+                  }/flat/64.png" alt="${currency}" class="w-4 h-4 rounded-full">
+                  <span class="text-xs font-medium">${currency}</span>
+                </div>
+                <span class="text-xs font-semibold">${convertedAmount.toFixed(
+                  2
+                )}</span>
+              </div>
+            `;
+        }
+
+        quickResults.innerHTML = html;
+      }
+    </script>
+  </body>
 </html>
